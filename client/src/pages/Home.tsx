@@ -15,9 +15,9 @@ const team = [
   ["01", "Abderrahmen Bouderbela", "Event President & Head of Partnerships", "+216 28 737 990"],
   ["02", "Khadija Kammoun", "Public Relations & Speaker Relations Specialist", "+216 99 988 304"],
   ["03", "Fatma Guermazi", "Social Media & Delegate Experience Specialist", "+216 55 680 377"],
-  ["05", "Youssef Ayadi", "Head of Operations", "+216 50 650 013"],
-  ["06", "Zied Affes", "Data & Information Specialist", "+216 54 051 117"],
-  ["07", "Mohamed Aziz Mtimet", "Head of Finance & Legalities", "+216 92 662 991"],
+  ["04", "Youssef Ayadi", "Head of Operations", "+216 50 650 013"],
+  ["05", "Zied Affes", "Data & Information Specialist", "+216 54 051 117"],
+  ["06", "Mohamed Aziz Mtimet", "Head of Finance & Legalities", "+216 92 662 991"],
 ];
 const clues = ["TEDx THYNA", "THE MINDS", "IDEAS", "THE SCENE", "THE MISSION"];
 function useCountdown() { const [now, setNow] = useState(Date.now()); useEffect(() => { const id = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(id); }, []); const target = useMemo(() => new Date("2026-11-15T18:00:00+01:00").getTime(), []); const delta = Math.max(target - now, 0); return { days: Math.floor(delta / 86400000), hours: Math.floor(delta / 3600000) % 24, minutes: Math.floor(delta / 60000) % 60, seconds: Math.floor(delta / 1000) % 60 }; }
