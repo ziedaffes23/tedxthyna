@@ -41,6 +41,14 @@
 
 ## Investigation board restoration
 
-- [ ] Réintégrer « 03 / INVESTIGATION BOARD » directement sous le hero de la homepage.
-- [ ] Conserver le fil rouge reliant The Scene au board et les cinq indices.
-- [ ] Tester, pousser et redéployer la correction.
+- [x] Réintégrer « 03 / INVESTIGATION BOARD » directement sous le hero de la homepage.
+- [x] Conserver le fil rouge reliant The Scene au board et les cinq indices.
+- [x] Tester, pousser et redéployer la correction — commit `de60c39`, preview Vercel Ready.
+
+## Board standalone page revision
+
+- [ ] Retirer le board de la homepage et restaurer le hero seul.
+- [ ] Ajouter une page autonome `/board` pour 03 / INVESTIGATION BOARD.
+- [ ] Ajouter Board à la navigation desktop et mobile.
+- [ ] Tester homepage, board, assets et routes directes.
+- [ ] Pousser la correction et redéployer Vercel.
