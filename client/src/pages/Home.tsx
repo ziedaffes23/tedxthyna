@@ -1,14 +1,12 @@
 /**
- * Redacted Noir / reference-led homepage.
- * The homepage is intentionally a single cinematic hero; the investigation
- * board and all deeper event details are separate navigable case-file pages.
+ * TEDx Thyna homepage.
+ * The opening sequence is designed as a focused, responsive invitation into the event.
  */
 import { useEffect, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Menu, X } from "lucide-react";
 
 const githubAsset = (filename: string) =>
   `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${filename}?v=f8febb8`;
-const mark = githubAsset("tedx-thyna-mark.png");
 const heroImage = githubAsset("tedx-thyna-hero.jpg");
 
 const navigation = [
@@ -23,24 +21,65 @@ const navigation = [
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
   const closeMenu = () => setMenuOpen(false);
 
-  return <div className="site-shell reference-home">
-    <nav className={`top-nav ${scrolled ? "is-scrolled" : ""}`} aria-label="Primary navigation">
-      <a className="brand" href="/" onClick={closeMenu} aria-label="TEDx Thyna home"><img src={mark} alt="TEDx Thyna mark" /><span>TEDx <b>THYNA</b></span></a>
-      <div className="nav-links">{navigation.map(([label, href]) => <a key={href} href={href}>{label}</a>)}<a className="nav-register" href="/register">REGISTER <ArrowUpRight size={14} /></a></div>
-      <button className="menu-toggle" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen}>{menuOpen ? <X /> : <Menu />}</button>
-    </nav>
-    {menuOpen && <div className="mobile-menu"><span className="mono red">CLEARANCE: OPEN</span>{navigation.map(([label, href]) => <a key={href} href={href} onClick={closeMenu}>{label} <ArrowUpRight /></a>)}<a href="/register" onClick={closeMenu}>REGISTER <ArrowUpRight /></a></div>}
-    <aside className="case-rail" aria-label="Case progress"><span className="rail-vertical">TEDx THYNA / 2026</span><span className="rail-progress">01 <i /> 07</span></aside>
-    <main id="top"><section className="hero scene reference-hero" style={{ backgroundImage: `linear-gradient(90deg, rgba(5,5,5,.94) 0%, rgba(5,5,5,.54) 55%, rgba(5,5,5,.48)), url(${heroImage})` }}>
-      <div className="hero-light" /><div className="hero-copy"><div className="eyebrow"><span className="status-dot" />CASE Nº TX-2026 / SFAX / ACTIVE</div><h1>TEDx<br /><span>THYNA</span></h1><p className="hero-tagline">THE MISSION<br /><em>BEGINS.</em></p><p className="hero-support">An idea can change everything.<br />What happens when a city decides to investigate?</p><div className="hero-actions"><a className="button button-red" href="/organization">ENTER THE ORGANIZATION <ArrowUpRight size={16} /></a><a className="text-link" href="/mission">DISCOVER THE MISSION <ArrowDownRight size={17} /></a></div></div>
-      <div className="hero-location"><span className="mono">LOCATION IDENTIFIED</span><strong>THÉÂTRE MUNICIPAL<br />DE SFAX</strong><span>PQM7+J55 · SFAX, TUNISIA</span></div><div className="hero-index mono">01 <span>—</span> ACCESS</div>
-    </section></main>
-  </div>;
+  return (
+    <div className="site-shell reference-home">
+      <nav className={`top-nav ${scrolled ? "is-scrolled" : ""}`} aria-label="Primary navigation">
+        <a className="brand" href="/" onClick={closeMenu} aria-label="TEDx Thyna home">
+          <span>TEDx <b>THYNA</b></span>
+        </a>
+        <div className="nav-links">
+          {navigation.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
+          <a className="nav-register" href="/register">REGISTER <ArrowUpRight size={14} /></a>
+        </div>
+        <button className="menu-toggle" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen}>
+          {menuOpen ? <X /> : <Menu />}
+        </button>
+      </nav>
+
+      {menuOpen && (
+        <div className="mobile-menu">
+          <span className="mono red">CLEARANCE: OPEN</span>
+          {navigation.map(([label, href]) => <a key={href} href={href} onClick={closeMenu}>{label} <ArrowUpRight /></a>)}
+          <a href="/register" onClick={closeMenu}>REGISTER <ArrowUpRight /></a>
+        </div>
+      )}
+
+      <aside className="case-rail" aria-label="Case progress">
+        <span className="rail-vertical">TEDx THYNA / 2026</span>
+        <span className="rail-progress">01 <i /> 07</span>
+      </aside>
+
+      <main id="top">
+        <section className="hero scene reference-hero" style={{ backgroundImage: `linear-gradient(90deg, rgba(5,5,5,.94) 0%, rgba(5,5,5,.54) 55%, rgba(5,5,5,.48)), url(${heroImage})` }}>
+          <div className="hero-light" />
+          <div className="hero-grid-mark" aria-hidden="true"><span /><span /></div>
+          <div className="hero-copy">
+            <div className="eyebrow"><span className="status-dot" />SIGNAL DETECTED / SFAX / TX-2026</div>
+            <div className="hero-title-wrap">
+              <span className="hero-title-index mono">NO. 01 / ORIGIN</span>
+              <h1>TEDx<br /><span>THYNA</span></h1>
+            </div>
+            <p className="hero-tagline">IDEAS<br /><em>MOVE US.</em></p>
+            <p className="hero-support">One city. Many voices.<br className="hero-desktop-break" /> A stage for the ideas that move us forward.</p>
+            <div className="hero-actions">
+              <a className="button button-red" href="/agenda">DISCOVER THE PROGRAMME <ArrowUpRight size={16} /></a>
+              <a className="text-link" href="/mission">READ THE MISSION <ArrowDownRight size={17} /></a>
+            </div>
+          </div>
+          <div className="hero-location"><span className="mono">LOCATION IDENTIFIED</span><strong>THÉÂTRE MUNICIPAL<br />DE SFAX</strong><span>PQM7+J55 · SFAX, TUNISIA</span></div>
+          <div className="hero-index mono">01 <span>—</span> ACCESS</div>
+          <a className="hero-scroll-cue mono" href="#top" aria-label="Scroll to explore"><span />SCROLL TO EXPLORE</a>
+        </section>
+      </main>
+    </div>
+  );
 }
