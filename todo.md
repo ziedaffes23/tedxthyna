@@ -26,3 +26,6 @@
 - [ ] Retirer les deux textes classifiés indiqués dans The Minds et The Organization.
 - [ ] Vérifier la page d’inscription et ses liens depuis la navigation.
 - [ ] Tester, pousser GitHub et redéployer le projet Vercel existant.
+
+- [ ] Ajouter une rewrite Vercel vers index.html afin que `/mission`, `/minds`, `/scene`, `/agenda`, `/organization` et `/register` fonctionnent en accès direct.
+- [ ] Recompiler, pousser la correction et vérifier le domaine de production.
