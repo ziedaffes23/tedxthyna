@@ -1,0 +1,64 @@
+/*
+ * Redacted Noir: each route is a separate case-file tab, with asymmetry,
+ * crimson signal accents, mono metadata, and the same visual evidence language.
+ */
+import { ArrowDownRight, ArrowUpRight, Copy, Instagram, Linkedin } from "lucide-react";
+import { useState, type ReactNode } from "react";
+
+const asset = (filename: string, manusPath: string) => window.location.hostname.endsWith("vercel.app") ? `/${filename}` : manusPath;
+const mark = asset("tedx-thyna-mark.png", "/manus-storage/tedx-thyna-mark_4b6a2584.png");
+const heroImage = asset("tedx-thyna-hero.jpg", "/manus-storage/tedx-thyna-hero_daa61ada.jpg");
+const boardImage = asset("tedx-thyna-board.jpg", "/manus-storage/tedx-thyna-board_deeac30c.jpg");
+const stageImage = asset("tedx-thyna-stage.jpg", "/manus-storage/tedx-thyna-stage_de709cc2.jpg");
+
+const team = [
+  ["01", "Abderrahmen Bouderbela", "Event President & Head of Partnerships", "+216 28 737 990"],
+  ["02", "Khadija Kammoun", "Head of Communications & Audience Engagement", "+216 99 988 304"],
+  ["03", "Sirine Feki", "Public Relations & Speaker Relations Specialist", "+216 52 026 681"],
+  ["04", "Fatma Guermazi", "Social Media & Delegate Experience Specialist", "+216 55 680 377"],
+  ["05", "Youssef Ayadi", "Head of Operations", "+216 50 650 013"],
+  ["06", "Zied Affes", "Data & Information Specialist", "+216 54 051 117"],
+  ["07", "Mohamed Aziz Mtimet", "Head of Finance & Legalities", "+216 92 662 991"],
+];
+
+function SiteNav() {
+  return (
+    <nav className="top-nav is-scrolled route-nav">
+      <a className="brand" href="/"><img src={mark} alt="TEDx Thyna mark" /><span>TEDx <b>THYNA</b></span></a>
+      <div className="nav-links">
+        <a href="/mission">MISSION</a><a href="/minds">THE MINDS</a><a href="/scene">THE SCENE</a><a href="/organization">ORGANIZATION</a><a className="nav-register" href="/register">REGISTER <ArrowUpRight size={14} /></a>
+      </div>
+    </nav>
+  );
+}
+
+function PageIntro({ number, label, title, lead }: { number: string; label: string; title: ReactNode; lead: string }) {
+  return <header className="route-intro section-pad"><div className="section-kicker"><span>{number} / {label}</span><span className="line" /></div><div className="route-intro-grid"><div><span className="mono red">CASE Nº TX-2026 / SFAX / ACTIVE</span><h1>{title}</h1></div><p>{lead}</p></div></header>;
+}
+
+function Mission() {
+  return <><PageIntro number="02" label="THE ORGANIZATION" title={<>Behind every idea<br />lies a <em>story.</em></>} lead="TEDx Thyna is more than a stage. It is a gathering of minds, ideas and people capable of changing the way we see the world." /><main className="route-body section-pad mission-route"><div className="evidence-note"><span className="stamp">FILE OPENED</span><p>And behind this event lies an organization.</p></div><div className="route-split"><p className="display-quote">Behind every story<br />lies a <em>network.</em></p><div className="route-panel"><span className="mono red">ACCESS PROTOCOL / 02</span><h2>Follow<br /><em>the signal.</em></h2><p>Every encounter leaves a trace. Every question opens a door.</p><a className="text-link" href="/minds">OPEN THE MINDS <ArrowDownRight size={17} /></a></div></div></main></>;
+}
+
+function Minds() {
+  const dossiers = [["THE FUTURE / CLASSIFIED", heroImage], ["THE CITY / CLASSIFIED", boardImage], ["THE HUMAN / CLASSIFIED", stageImage]];
+  return <><PageIntro number="04" label="THE MINDS" title={<>The people<br />behind the <em>signal.</em></>} lead="Speaker files are currently classified. The right questions are already in motion." /><main className="route-body section-pad minds-route"><div className="classified-strip"><span className="mono red">EVIDENCE INDEX / SPEAKER FILES</span><span className="mono">CLEARANCE: PENDING</span></div><div className="dossier-grid">{dossiers.map(([name, image], i) => <a key={name} className={`dossier-card dossier-route-card dossier-offset-${i}`} href="/register"><span className="dossier-number">CASE FILE 0{i + 1}</span><div className="dossier-image" style={{ backgroundImage: `linear-gradient(180deg, transparent 35%, rgba(5,5,5,.86)), url(${image})` }} /><span className="dossier-redact">██████████████</span><strong>{name}</strong><small>STATUS: TO BE REVEALED</small><ArrowUpRight /></a>)}</div></main></>;
+}
+
+function Organization() {
+  const [active, setActive] = useState<string | null>(null);
+  return <><PageIntro number="05" label="THE ORGANIZATION" title={<>Personnel<br /><em>files.</em></>} lead="Seven people. One operation. Contact is granted by intent." /><main className="route-body section-pad organization-route"><div className="classified-strip"><span className="mono red">PERSONNEL INDEX / 07 FILES</span><span className="mono">STATUS: ACTIVE</span></div><div className="team-list">{team.map(([n, name, role, phone]) => <div className="team-file" key={n}><span className="team-number">{n}</span><div className="team-person"><span className="mono">PERSONNEL FILE {n}/07</span><strong>{name}</strong><small>{role}</small></div><div className="team-contact"><span className="mono">CONTACT</span><button className={active === phone ? "revealed" : ""} onClick={() => { navigator.clipboard?.writeText(phone); setActive(phone); window.setTimeout(() => setActive(null), 1200); }}>{active === phone ? phone : "████████████"}<Copy size={14} /></button></div><span className="team-status"><i /> ACTIVE</span></div>)}</div></main></>;
+}
+
+function Scene() {
+  return <><PageIntro number="06" label="THE SCENE" title={<>The place<br />where ideas<br /><em>arrive.</em></>} lead="An address, a stage, a city waiting for the next signal." /><main className="route-body section-pad scene-route"><div className="scene-card"><div className="scene-photo" style={{ backgroundImage: `url(${stageImage})` }}><span className="stamp">LOCATION<br />IDENTIFIED</span></div><div className="scene-info"><span className="mono red">OPERATION SITE / SFAX</span><h2>THÉÂTRE<br /><em>MUNICIPAL</em><br />DE SFAX</h2><p>PQM7+J55<br />Sfax, Tunisia</p><div className="scene-data"><span>DATE <b>TO BE ANNOUNCED</b></span><span>TIME <b>TO BE ANNOUNCED</b></span></div><a className="text-link" href="https://maps.google.com/?q=Theatre+Municipal+de+Sfax" target="_blank" rel="noreferrer">OPEN LOCATION <ArrowUpRight size={17} /></a></div></div></main></>;
+}
+
+function Register() {
+  return <><PageIntro number="07" label="THE MISSION" title={<>Your seat<br />has been <em>identified.</em></>} lead="The operation is already in motion. Register your intent and enter the archive." /><main className="route-body section-pad register-route"><div className="register-panel"><div><span className="mono red">ACCESS PROTOCOL / 07</span><h2>Join the<br /><em>operation.</em></h2><p>Registration opens soon. Leave a signal and we will contact you.</p></div><a className="register-button" href="mailto:hello@tedxthyna.tn?subject=TEDx%20Thyna%20Registration">REGISTER NOW <ArrowUpRight size={22} /><small>ACCESS GRANTED</small></a></div><div className="route-footnote mono">FILE STATUS: ACTIVE / CASE Nº TX-2026 / THÉÂTRE MUNICIPAL DE SFAX</div></main></>;
+}
+
+export default function SectionPage({ section }: { section: "mission" | "minds" | "organization" | "scene" | "register" }) {
+  const Page = { mission: Mission, minds: Minds, organization: Organization, scene: Scene, register: Register }[section];
+  return <div className="site-shell route-shell"><SiteNav /><aside className="case-rail"><span className="rail-vertical">TEDx THYNA / 2026</span><span className="rail-progress">{({ mission: "02", minds: "04", organization: "05", scene: "06", register: "07" }[section])} <i /> 07</span></aside><Page /><footer className="footer"><div className="footer-brand"><img src={mark} alt="" /><span>TEDx <b>THYNA</b></span><p>THE MISSION DOESN'T<br />END HERE.</p></div><div className="footer-links"><span className="mono">TRANSMISSION CHANNELS</span><a href="#">Instagram <Instagram size={15} /></a><a href="#">LinkedIn <Linkedin size={15} /></a><a href="mailto:hello@tedxthyna.tn">Contact <ArrowUpRight size={15} /></a></div><div className="footer-meta mono">THÉÂTRE MUNICIPAL DE SFAX<br /><br />FILE STATUS: ACTIVE<br />CASE Nº: TX-2026</div></footer></div>;
+}
