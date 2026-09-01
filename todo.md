@@ -32,9 +32,15 @@
 
 ## Reference-led homepage revision
 
-- [ ] Reproduire la composition de la homepage de référence : hero plein écran, image sombre du théâtre, titre TEDx THYNA, rail latéral et navigation supérieure.
-- [ ] Garder la homepage focalisée sur la mission et déplacer les détails secondaires vers les pages de navigation.
-- [ ] Vérifier les pages Mission, The Minds, The Scene, Agenda, Organization et Register.
-- [ ] Conserver Agenda avec « WILL BE ANNOUNCED SOON » et Registration comme page dédiée.
-- [ ] Tester la fidélité visuelle, les routes directes, les images et le responsive.
-- [ ] Pousser la refonte et redéployer Vercel.
+- [x] Reproduire la composition de la homepage de référence : hero plein écran, image sombre du théâtre, titre TEDx THYNA, rail latéral et navigation supérieure.
+- [x] Garder la homepage focalisée sur la mission et déplacer les détails secondaires vers les pages de navigation.
+- [x] Vérifier les pages Mission, The Minds, The Scene, Agenda, Organization et Register.
+- [x] Conserver Agenda avec « WILL BE ANNOUNCED SOON » et Registration comme page dédiée.
+- [x] Tester la fidélité visuelle, les routes directes, les images et le responsive.
+- [x] Pousser la refonte et redéployer Vercel — commit `3831cbe`, déploiement Ready.
+
+## Investigation board restoration
+
+- [ ] Réintégrer « 03 / INVESTIGATION BOARD » directement sous le hero de la homepage.
+- [ ] Conserver le fil rouge reliant The Scene au board et les cinq indices.
+- [ ] Tester, pousser et redéployer la correction.

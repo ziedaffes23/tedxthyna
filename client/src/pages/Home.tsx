@@ -11,6 +11,7 @@ const githubAsset = (filename: string) =>
 
 const mark = githubAsset("tedx-thyna-mark.png");
 const heroImage = githubAsset("tedx-thyna-hero.jpg");
+const boardImage = githubAsset("tedx-thyna-board.jpg");
 
 const navigation = [
   ["MISSION", "/mission"],
@@ -83,6 +84,18 @@ export default function Home() {
             <span>PQM7+J55 · SFAX, TUNISIA</span>
           </div>
           <div className="hero-index mono">01 <span>—</span> ACCESS</div>
+        </section>
+
+        <section id="board" className="board-section section-pad reference-board">
+          <div className="section-kicker"><span>03 / INVESTIGATION BOARD</span><span className="line" /></div>
+          <div className="board-frame" style={{ backgroundImage: `linear-gradient(90deg, rgba(5,5,5,.78), rgba(5,5,5,.26)), url(${boardImage})` }}>
+            <div className="board-head"><span className="mono red">EVIDENCE MAP / LIVE</span><h2>Everything<br /><em>connects.</em></h2></div>
+            <div className="clue-map">
+              {[["TEDx THYNA", "ORIGIN"], ["THE MINDS", "LINKED"], ["IDEAS", "LINKED"], ["THE SCENE", "LINKED"], ["THE MISSION", "PURPOSE"]].map(([clue, status], i) => <div key={clue} className={`clue clue-${i}`}><span>{String(i + 1).padStart(2, "0")}</span><b>{clue}</b><small>{status}</small></div>)}
+            </div>
+            <div className="board-thread thread-one" /><div className="board-thread thread-two" /><div className="board-thread thread-three" />
+            <div className="board-caption mono">SELECT A CLUE TO CONTINUE THE INVESTIGATION</div>
+          </div>
         </section>
       </main>
     </div>
