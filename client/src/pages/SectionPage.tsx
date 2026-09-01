@@ -5,20 +5,19 @@
 import { ArrowDownRight, ArrowUpRight, Copy, Instagram, Linkedin } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
-const asset = (filename: string, manusPath: string) => window.location.hostname.endsWith("vercel.app") ? `/${filename}` : manusPath;
-const mark = asset("tedx-thyna-mark.png", "/manus-storage/tedx-thyna-mark_4b6a2584.png");
-const heroImage = asset("tedx-thyna-hero.jpg", "/manus-storage/tedx-thyna-hero_daa61ada.jpg");
-const boardImage = asset("tedx-thyna-board.jpg", "/manus-storage/tedx-thyna-board_deeac30c.jpg");
-const stageImage = asset("tedx-thyna-stage.jpg", "/manus-storage/tedx-thyna-stage_de709cc2.jpg");
+const githubAsset = (filename: string) => `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${filename}?v=f8febb8`;
+const mark = githubAsset("tedx-thyna-mark.png");
+const heroImage = githubAsset("tedx-thyna-hero.jpg");
+const boardImage = githubAsset("tedx-thyna-board.jpg");
+const stageImage = githubAsset("tedx-thyna-stage.jpg");
 
 const team = [
   ["01", "Abderrahmen Bouderbela", "Event President & Head of Partnerships", "+216 28 737 990"],
-  ["02", "Khadija Kammoun", "Head of Communications & Audience Engagement", "+216 99 988 304"],
-  ["03", "Sirine Feki", "Public Relations & Speaker Relations Specialist", "+216 52 026 681"],
-  ["04", "Fatma Guermazi", "Social Media & Delegate Experience Specialist", "+216 55 680 377"],
-  ["05", "Youssef Ayadi", "Head of Operations", "+216 50 650 013"],
-  ["06", "Zied Affes", "Data & Information Specialist", "+216 54 051 117"],
-  ["07", "Mohamed Aziz Mtimet", "Head of Finance & Legalities", "+216 92 662 991"],
+  ["02", "Khadija Kammoun", "Public Relations & Speaker Relations Specialist", "+216 99 988 304"],
+  ["03", "Fatma Guermazi", "Social Media & Delegate Experience Specialist", "+216 55 680 377"],
+  ["04", "Youssef Ayadi", "Head of Operations", "+216 50 650 013"],
+  ["05", "Zied Affes", "Data & Information Specialist", "+216 54 051 117"],
+  ["06", "Mohamed Aziz Mtimet", "Head of Finance & Legalities", "+216 92 662 991"],
 ];
 
 function SiteNav() {
@@ -41,7 +40,7 @@ function Minds() {
 
 function Organization() {
   const [active, setActive] = useState<string | null>(null);
-  return <><PageIntro number="05" label="THE ORGANIZATION" title={<>Personnel<br /><em>files.</em></>} lead="The people behind the signal. A live operation in Sfax." /><main className="route-body section-pad organization-route"><div className="classified-strip"><span className="mono red">PERSONNEL INDEX / 07 FILES</span><span className="mono">STATUS: ACTIVE</span></div><div className="team-list">{team.map(([n, name, role, phone]) => <div className="team-file" key={n}><span className="team-number">{n}</span><div className="team-person"><span className="mono">PERSONNEL FILE {n}/07</span><strong>{name}</strong><small>{role}</small></div><div className="team-contact"><span className="mono">CONTACT</span><button className={active === phone ? "revealed" : ""} onClick={() => { navigator.clipboard?.writeText(phone); setActive(phone); window.setTimeout(() => setActive(null), 1200); }}>{active === phone ? phone : "████████████"}<Copy size={14} /></button></div><span className="team-status"><i /> ACTIVE</span></div>)}</div></main></>;
+  return <><PageIntro number="05" label="THE ORGANIZATION" title={<>Personnel<br /><em>files.</em></>} lead="The people behind the signal. A live operation in Sfax." /><main className="route-body section-pad organization-route"><div className="classified-strip"><span className="mono red">PERSONNEL INDEX / 06 FILES</span><span className="mono">STATUS: ACTIVE</span></div><div className="team-list">{team.map(([n, name, role, phone]) => <div className="team-file" key={n}><span className="team-number">{n}</span><div className="team-person"><span className="mono">PERSONNEL FILE {n}/06</span><strong>{name}</strong><small>{role}</small></div><div className="team-contact"><span className="mono">CONTACT</span><button className={active === phone ? "revealed" : ""} onClick={() => { navigator.clipboard?.writeText(phone); setActive(phone); window.setTimeout(() => setActive(null), 1200); }}>{active === phone ? phone : "████████████"}<Copy size={14} /></button></div><span className="team-status"><i /> ACTIVE</span></div>)}</div></main></>;
 }
 
 function Scene() {
