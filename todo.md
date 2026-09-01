@@ -18,14 +18,23 @@
 
 ## Final content revision — event and agenda
 
-- [ ] Retirer Sirine Feki de la liste de l’organisation.
-- [ ] Remplacer le poste de Khadija par « Public Relations & Speaker Relations Specialist ».
-- [ ] Mettre la date de l’événement au 15 novembre 2026 et mettre à jour le compte à rebours.
-- [ ] Ajouter l’onglet Agenda et une page indiquant « TO BE ANNOUNCED SOON ».
-- [ ] Faire relier visuellement The Scene au board d’investigation par un fil.
-- [ ] Retirer les deux textes classifiés indiqués dans The Minds et The Organization.
-- [ ] Vérifier la page d’inscription et ses liens depuis la navigation.
-- [ ] Tester, pousser GitHub et redéployer le projet Vercel existant.
+- [x] Retirer Sirine Feki de la liste de l’organisation.
+- [x] Remplacer le poste de Khadija par « Public Relations & Speaker Relations Specialist ».
+- [x] Mettre la date de l’événement au 15 novembre 2026 et mettre à jour le compte à rebours.
+- [x] Ajouter l’onglet Agenda et une page indiquant « TO BE ANNOUNCED SOON ».
+- [x] Faire relier visuellement The Scene au board d’investigation par un fil.
+- [x] Retirer les deux textes classifiés indiqués dans The Minds et The Organization.
+- [x] Vérifier la page d’inscription et ses liens depuis la navigation.
+- [x] Tester, pousser GitHub et redéployer le projet Vercel existant — déploiement final `4f1cfb2` Ready.
 
-- [ ] Ajouter une rewrite Vercel vers index.html afin que `/mission`, `/minds`, `/scene`, `/agenda`, `/organization` et `/register` fonctionnent en accès direct.
-- [ ] Recompiler, pousser la correction et vérifier le domaine de production.
+- [x] Ajouter une rewrite Vercel vers index.html afin que `/mission`, `/minds`, `/scene`, `/agenda`, `/organization` et `/register` fonctionnent en accès direct.
+- [x] Recompiler, pousser la correction et vérifier le domaine de production.
+
+## Reference-led homepage revision
+
+- [ ] Reproduire la composition de la homepage de référence : hero plein écran, image sombre du théâtre, titre TEDx THYNA, rail latéral et navigation supérieure.
+- [ ] Garder la homepage focalisée sur la mission et déplacer les détails secondaires vers les pages de navigation.
+- [ ] Vérifier les pages Mission, The Minds, The Scene, Agenda, Organization et Register.
+- [ ] Conserver Agenda avec « WILL BE ANNOUNCED SOON » et Registration comme page dédiée.
+- [ ] Tester la fidélité visuelle, les routes directes, les images et le responsive.
+- [ ] Pousser la refonte et redéployer Vercel.

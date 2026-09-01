@@ -48,7 +48,7 @@ function Scene() {
 }
 
 function Agenda() {
-  return <><PageIntro number="04" label="THE AGENDA" title={<>The day<br />will be<br /><em>revealed.</em></>} lead="The programme is being assembled. The next signal will announce every moment." /><main className="route-body section-pad agenda-route"><div className="agenda-card"><span className="stamp">IN PREPARATION</span><span className="mono red">AGENDA / TX-2026</span><h2>TO BE<br /><em>ANNOUNCED SOON.</em></h2><p>Talks, encounters and performances will appear here as soon as the programme is cleared.</p><a className="text-link" href="/register">REGISTER YOUR INTEREST <ArrowUpRight size={17} /></a></div></main></>;
+  return <><PageIntro number="04" label="THE AGENDA" title={<>The day<br />will be<br /><em>revealed.</em></>} lead="The programme is being assembled. The next signal will announce every moment." /><main className="route-body section-pad agenda-route"><div className="agenda-card"><span className="stamp">IN PREPARATION</span><span className="mono red">AGENDA / TX-2026</span><h2>WILL BE<br /><em>ANNOUNCED SOON.</em></h2><p>Talks, encounters and performances will appear here as soon as the programme is cleared.</p><a className="text-link" href="/register">REGISTER YOUR INTEREST <ArrowUpRight size={17} /></a></div></main></>;
 }
 
 function Register() {

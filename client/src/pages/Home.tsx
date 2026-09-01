@@ -1,44 +1,90 @@
-/*
- * Redacted Noir: cinematic editorialism, near-black canvas, Thyna Crimson signal,
- * asymmetric case-file layout, staged reveals and restrained motion.
+/**
+ * Redacted Noir / reference-led homepage.
+ * This file deliberately keeps the homepage to one cinematic hero: all deeper
+ * event details live behind the persistent top navigation routes.
  */
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowDownRight, ArrowUpRight, Copy, Instagram, Linkedin, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowDownRight, ArrowUpRight, Menu, X } from "lucide-react";
 
-const githubAsset = (filename: string) => `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${filename}?v=f8febb8`;
+const githubAsset = (filename: string) =>
+  `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${filename}?v=f8febb8`;
+
 const mark = githubAsset("tedx-thyna-mark.png");
 const heroImage = githubAsset("tedx-thyna-hero.jpg");
-const boardImage = githubAsset("tedx-thyna-board.jpg");
-const stageImage = githubAsset("tedx-thyna-stage.jpg");
 
-const team = [
-  ["01", "Abderrahmen Bouderbela", "Event President & Head of Partnerships", "+216 28 737 990"],
-  ["02", "Khadija Kammoun", "Public Relations & Speaker Relations Specialist", "+216 99 988 304"],
-  ["03", "Fatma Guermazi", "Social Media & Delegate Experience Specialist", "+216 55 680 377"],
-  ["04", "Youssef Ayadi", "Head of Operations", "+216 50 650 013"],
-  ["05", "Zied Affes", "Data & Information Specialist", "+216 54 051 117"],
-  ["06", "Mohamed Aziz Mtimet", "Head of Finance & Legalities", "+216 92 662 991"],
+const navigation = [
+  ["MISSION", "/mission"],
+  ["THE MINDS", "/minds"],
+  ["THE SCENE", "/scene"],
+  ["AGENDA", "/agenda"],
+  ["ORGANIZATION", "/organization"],
 ];
-const clues = ["TEDx THYNA", "THE MINDS", "IDEAS", "THE SCENE", "THE MISSION"];
-function useCountdown() { const [now, setNow] = useState(Date.now()); useEffect(() => { const id = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(id); }, []); const target = useMemo(() => new Date("2026-11-15T18:00:00+01:00").getTime(), []); const delta = Math.max(target - now, 0); return { days: Math.floor(delta / 86400000), hours: Math.floor(delta / 3600000) % 24, minutes: Math.floor(delta / 60000) % 60, seconds: Math.floor(delta / 1000) % 60 }; }
 
 export default function Home() {
-  const [loading, setLoading] = useState(true); const [intro, setIntro] = useState(true); const [menuOpen, setMenuOpen] = useState(false); const [activeTeam, setActiveTeam] = useState<string | null>(null); const [cursor, setCursor] = useState({ x: 0, y: 0, label: "" }); const [scrolled, setScrolled] = useState(false); const heroRef = useRef<HTMLDivElement>(null); const countdown = useCountdown();
-  useEffect(() => { const timer = window.setTimeout(() => setLoading(false), 1500); const introTimer = window.setTimeout(() => setIntro(false), 4700); const onScroll = () => setScrolled(window.scrollY > 36); const onMove = (e: MouseEvent) => setCursor((c) => ({ ...c, x: e.clientX, y: e.clientY })); window.addEventListener("scroll", onScroll); window.addEventListener("mousemove", onMove); return () => { window.clearTimeout(timer); window.clearTimeout(introTimer); window.removeEventListener("scroll", onScroll); window.removeEventListener("mousemove", onMove); }; }, []);
-  const scrollTo = (id: string) => { setMenuOpen(false); document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); }; const copyNumber = (number: string) => { navigator.clipboard?.writeText(number); setActiveTeam(number); window.setTimeout(() => setActiveTeam(null), 1200); };
-  if (loading) return <div className="loading-screen"><img src={mark} alt="" /><div className="loading-wordmark">TEDx THYNA</div><div className="loading-meta">INITIALIZING ARCHIVE<span className="blink">_</span></div><div className="loading-bar"><i /></div><div className="loading-access">SECURITY CHECK <b>██████████</b> 100%</div></div>;
-  return <div className="site-shell">{cursor.label && <div className="custom-cursor-label" style={{ left: cursor.x + 16, top: cursor.y + 16 }}>{cursor.label}</div>}
-    {intro && <div className="intro-screen"><div className="intro-grid" /><div className="intro-scan" /><div className="intro-content"><span className="mono red">CLASSIFIED FILE / 001</span><h2 className="intro-line intro-one">THYNA ORGANIZATION<span className="blink">_</span></h2><div className="intro-data"><span>CASE Nº: TX-2026</span><span>LOCATION: SFAX</span><span>STATUS: ACTIVE</span></div><p className="intro-subject">SUBJECT: <strong>TEDx THYNA</strong></p><div className="intro-reveal">THE MISSION<br /><em>BEGINS.</em></div></div><button className="skip-intro" onClick={() => setIntro(false)}>SKIP INTRO <ArrowDownRight size={15} /></button></div>}
-    <nav className={`top-nav ${scrolled ? "is-scrolled" : ""}`}><button className="brand" onClick={() => scrollTo("top")}><img src={mark} alt="TEDx Thyna mark" /><span>TEDx <b>THYNA</b></span></button><div className="nav-links"><a href="/mission">MISSION</a><a href="/minds">THE MINDS</a><a href="/scene">THE SCENE</a><a href="/agenda">AGENDA</a><a href="/organization">ORGANIZATION</a><a className="nav-register" href="/register">REGISTER <ArrowUpRight size={14} /></a></div><button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open navigation">{menuOpen ? <X /> : <Menu />}</button></nav>
-    {menuOpen && <div className="mobile-menu"><span className="mono red">CLEARANCE: OPEN</span><a href="/mission">MISSION <ArrowUpRight /></a><a href="/minds">THE MINDS <ArrowUpRight /></a><a href="/scene">THE SCENE <ArrowUpRight /></a><a href="/agenda">AGENDA <ArrowUpRight /></a><a href="/organization">ORGANIZATION <ArrowUpRight /></a><a href="/register">REGISTER <ArrowUpRight /></a></div>}
-    <aside className="case-rail"><span className="rail-vertical">TEDx THYNA / 2026</span><span className="rail-progress">01 <i /> 07</span></aside>
-    <main id="top"><section className="hero scene" ref={heroRef} style={{ backgroundImage: `linear-gradient(90deg, rgba(5,5,5,.94) 0%, rgba(5,5,5,.54) 55%, rgba(5,5,5,.48)), url(${heroImage})` }}><div className="hero-light" /><div className="hero-copy"><div className="eyebrow"><span className="status-dot" />CASE Nº TX-2026 / SFAX / ACTIVE</div><h1>TEDx<br /><span>THYNA</span></h1><p className="hero-tagline">THE MISSION<br /><em>BEGINS.</em></p><p className="hero-support">An idea can change everything.<br />What happens when a city decides to investigate?</p><div className="hero-actions"><button className="button button-red" onClick={() => scrollTo("mission")} onMouseEnter={() => setCursor({ ...cursor, label: "ENTER" })} onMouseLeave={() => setCursor({ ...cursor, label: "" })}>ENTER THE ORGANIZATION <ArrowUpRight size={16} /></button><button className="text-link" onClick={() => scrollTo("register")}>DISCOVER THE MISSION <ArrowDownRight size={17} /></button></div></div><div className="hero-location"><span className="mono">LOCATION IDENTIFIED</span><strong>THÉÂTRE MUNICIPAL<br />DE SFAX</strong><span>PQM7+J55 · SFAX, TUNISIA</span></div><div className="hero-index mono">01 <span>—</span> ACCESS</div></section>
-      <section id="mission" className="manifesto section-pad"><div className="section-kicker"><span>02 / THE ORGANIZATION</span><span className="line" /></div><div className="manifesto-layout"><div><p className="display-quote">Behind every idea<br />lies a <em>story.</em></p><p className="display-quote offset">Behind every story<br />lies a <em>network.</em></p></div><div className="manifesto-copy"><span className="stamp">FILE OPENED</span><p>And behind this event lies an organization.</p><p className="muted">TEDx Thyna is more than a stage. It is a gathering of minds, ideas and people capable of changing the way we see the world.</p><button className="text-link" onClick={() => scrollTo("board")}>FOLLOW THE SIGNAL <ArrowDownRight size={17} /></button></div></div></section>
-      <section id="board" className="board-section section-pad"><div className="section-kicker"><span>03 / INVESTIGATION BOARD</span><span className="line" /></div><div className="board-frame" style={{ backgroundImage: `linear-gradient(90deg, rgba(5,5,5,.78), rgba(5,5,5,.26)), url(${boardImage})` }}><div className="board-head"><span className="mono red">EVIDENCE MAP / LIVE</span><h2>Everything<br /><em>connects.</em></h2></div><div className="clue-map">{clues.map((clue, i) => <div key={clue} className={`clue clue-${i}`}><span>{String(i + 1).padStart(2, "0")}</span><b>{clue}</b><small>{i === 0 ? "ORIGIN" : i === 4 ? "PURPOSE" : "LINKED"}</small></div>)}</div><div className="board-thread thread-one" /><div className="board-thread thread-two" /><div className="board-thread thread-three" /><div className="board-caption mono">SELECT A CLUE TO CONTINUE THE INVESTIGATION</div></div></section>
-      <section id="minds" className="minds-section section-pad"><div className="section-kicker"><span>04 / THE MINDS</span><span className="line" /></div><div className="section-intro"><h2>The people<br />behind the <em>signal.</em></h2><p>Three perspectives.<br />One signal waiting to be revealed.</p></div><div className="dossier-grid">{[["THE FUTURE / CLASSIFIED", heroImage], ["THE CITY / CLASSIFIED", boardImage], ["THE HUMAN / CLASSIFIED", stageImage]].map(([name, image], i) => <a href="/minds" key={name} className="dossier-card" onMouseEnter={() => setCursor({ ...cursor, label: "VIEW FILE" })} onMouseLeave={() => setCursor({ ...cursor, label: "" })}><span className="dossier-number">CASE FILE 0{i + 1}</span><div className="dossier-image" style={{ backgroundImage: `linear-gradient(180deg, transparent 30%, rgba(5,5,5,.88)), url(${image})` }} /><span className="dossier-redact">██████████████</span><strong>{name}</strong><small>STATUS: TO BE REVEALED</small><ArrowUpRight /></a>)}</div></section>
-      <section id="organization" className="team-section section-pad"><div className="section-kicker"><span>05 / THE ORGANIZATION</span><span className="line" /></div><div className="section-intro team-intro"><h2>Personnel<br /><em>files.</em></h2><p>The people behind the signal.<br />A live operation in Sfax.</p></div><div className="team-list">{team.map(([n, name, role, phone]) => <div className="team-file" key={n}><span className="team-number">{n}</span><div className="team-person"><span className="mono">PERSONNEL FILE {n}/06</span><strong>{name}</strong><small>{role}</small></div><div className="team-contact"><span className="mono">CONTACT</span><button className={activeTeam === phone ? "revealed" : ""} onClick={() => copyNumber(phone)}>{activeTeam === phone ? phone : "████████████"}<Copy size={14} /></button></div><span className="team-status"><i /> ACTIVE</span></div>)}</div></section>
-      <section id="scene" className="scene-section section-pad"><div className="section-kicker"><span>06 / THE SCENE</span><span className="line" /></div><div className="scene-card"><div className="scene-photo" style={{ backgroundImage: `url(${stageImage})` }}><span className="stamp">LOCATION<br />IDENTIFIED</span></div><div className="scene-info"><span className="mono red">OPERATION SITE / SFAX</span><h2>THÉÂTRE<br /><em>MUNICIPAL</em><br />DE SFAX</h2><p>PQM7+J55<br />Sfax, Tunisia</p><div className="scene-data"><span>DATE <b>15 NOVEMBER 2026</b></span><span>TIME <b>TO BE ANNOUNCED</b></span></div><a className="text-link" href="https://maps.google.com/?q=Theatre+Municipal+de+Sfax" target="_blank" rel="noreferrer">OPEN LOCATION <ArrowUpRight size={17} /></a></div></div></section>
-      <section className="countdown-section section-pad"><div className="countdown-copy"><span className="mono red">FILE STATUS: ACTIVE</span><h2>The operation<br /><em>begins in.</em></h2></div><div className="countdown-grid">{[[countdown.days, "DAYS"], [countdown.hours, "HOURS"], [countdown.minutes, "MINUTES"], [countdown.seconds, "SECONDS"]].map(([v, label]) => <div key={label}><strong>{String(v).padStart(2, "0")}</strong><span>{label}</span></div>)}</div></section>
-      <section id="register" className="register-section"><div className="register-inner"><div><span className="mono">07 / THE MISSION</span><h2>Join the<br /><em>operation.</em></h2><p>Your seat has been identified.</p></div><button className="register-button" onMouseEnter={() => setCursor({ ...cursor, label: "ENTER" })} onMouseLeave={() => setCursor({ ...cursor, label: "" })}>REGISTER NOW <ArrowUpRight size={22} /><small>ACCESS GRANTED</small></button></div></section></main>
-    <footer className="footer"><div className="footer-brand"><img src={mark} alt="" /><span>TEDx <b>THYNA</b></span><p>THE MISSION DOESN'T<br />END HERE.</p></div><div className="footer-links"><span className="mono">TRANSMISSION CHANNELS</span><a href="#">Instagram <Instagram size={15} /></a><a href="#">LinkedIn <Linkedin size={15} /></a><a href="mailto:hello@tedxthyna.tn">Contact <ArrowUpRight size={15} /></a></div><div className="footer-meta mono">THÉÂTRE MUNICIPAL DE SFAX<br /><br />FILE STATUS: ACTIVE<br />CASE Nº: TX-2026</div></footer></div>;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const closeMenu = () => setMenuOpen(false);
+
+  return (
+    <div className="site-shell reference-home">
+      <nav className={`top-nav ${scrolled ? "is-scrolled" : ""}`} aria-label="Primary navigation">
+        <a className="brand" href="/" onClick={closeMenu} aria-label="TEDx Thyna home">
+          <img src={mark} alt="TEDx Thyna mark" />
+          <span>TEDx <b>THYNA</b></span>
+        </a>
+        <div className="nav-links">
+          {navigation.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
+          <a className="nav-register" href="/register">REGISTER <ArrowUpRight size={14} /></a>
+        </div>
+        <button className="menu-toggle" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen}>
+          {menuOpen ? <X /> : <Menu />}
+        </button>
+      </nav>
+
+      {menuOpen && (
+        <div className="mobile-menu">
+          <span className="mono red">CLEARANCE: OPEN</span>
+          {navigation.map(([label, href]) => <a key={href} href={href} onClick={closeMenu}>{label} <ArrowUpRight /></a>)}
+          <a href="/register" onClick={closeMenu}>REGISTER <ArrowUpRight /></a>
+        </div>
+      )}
+
+      <aside className="case-rail" aria-label="Case progress">
+        <span className="rail-vertical">TEDx THYNA / 2026</span>
+        <span className="rail-progress">01 <i /> 07</span>
+      </aside>
+
+      <main id="top">
+        <section
+          className="hero scene reference-hero"
+          style={{ backgroundImage: `linear-gradient(90deg, rgba(5,5,5,.94) 0%, rgba(5,5,5,.54) 55%, rgba(5,5,5,.48)), url(${heroImage})` }}
+        >
+          <div className="hero-light" />
+          <div className="hero-copy">
+            <div className="eyebrow"><span className="status-dot" />CASE Nº TX-2026 / SFAX / ACTIVE</div>
+            <h1>TEDx<br /><span>THYNA</span></h1>
+            <p className="hero-tagline">THE MISSION<br /><em>BEGINS.</em></p>
+            <p className="hero-support">An idea can change everything.<br />What happens when a city decides to investigate?</p>
+            <div className="hero-actions">
+              <a className="button button-red" href="/organization">ENTER THE ORGANIZATION <ArrowUpRight size={16} /></a>
+              <a className="text-link" href="/mission">DISCOVER THE MISSION <ArrowDownRight size={17} /></a>
+            </div>
+          </div>
+          <div className="hero-location">
+            <span className="mono">LOCATION IDENTIFIED</span>
+            <strong>THÉÂTRE MUNICIPAL<br />DE SFAX</strong>
+            <span>PQM7+J55 · SFAX, TUNISIA</span>
+          </div>
+          <div className="hero-index mono">01 <span>—</span> ACCESS</div>
+        </section>
+      </main>
+    </div>
+  );
 }
