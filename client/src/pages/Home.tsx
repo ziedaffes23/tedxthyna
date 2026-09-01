@@ -21,6 +21,7 @@ const navigation = [
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileIntroVisible, setMobileIntroVisible] = useState(true);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -28,10 +29,31 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timer = window.setTimeout(() => setMobileIntroVisible(false), reducedMotion ? 250 : 3400);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const closeMenu = () => setMenuOpen(false);
+  const skipMobileIntro = () => setMobileIntroVisible(false);
 
   return (
     <div className="site-shell reference-home">
+      {mobileIntroVisible && (
+        <section className="mobile-intro" aria-label="TEDx Thyna introduction">
+          <div className="mobile-intro-grid" aria-hidden="true" />
+          <div className="mobile-intro-scan" aria-hidden="true" />
+          <div className="mobile-intro-content">
+            <span className="mobile-intro-kicker"><i /> MOBILE TRANSMISSION / 01</span>
+            <div className="mobile-intro-wordmark">TEDx <b>THYNA</b></div>
+            <p className="mobile-intro-title">Ideas<br /><em>move us.</em></p>
+            <p className="mobile-intro-copy">A new signal is coming from Sfax.<br />Step into the story.</p>
+            <button className="mobile-intro-enter" onClick={skipMobileIntro}>ENTER THE EXPERIENCE <ArrowUpRight size={16} /></button>
+          </div>
+          <button className="mobile-intro-skip mono" onClick={skipMobileIntro}>SKIP INTRO <span>↗</span></button>
+        </section>
+      )}
       <nav className={`top-nav ${scrolled ? "is-scrolled" : ""}`} aria-label="Primary navigation">
         <a className="brand" href="/" onClick={closeMenu} aria-label="TEDx Thyna home">
           <span>TEDx <b>THYNA</b></span>
