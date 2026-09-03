@@ -136,7 +136,7 @@ export default function Home() {
               <p className="display-quote">Ideas don't<br />just <em>happen.</em></p>
               <p className="display-quote offset">They <em>move</em><br />people.</p>
             </div>
-            <div className="manifesto-copy"><span className="stamp">FILE OPENED</span><p>TEDx Thyna is a gathering of minds, ideas and people capable of changing the way we see the world.</p><p className="muted">This is not just a stage. It is a space to question, connect and leave with a different point of view.</p><a className="text-link" href="/mission">OPEN THE MISSION <ArrowUpRight size={16} /></a></div>
+            <div className="manifesto-copy"><span className="stamp">FILE OPENED</span><p>TEDx Thyna is a gathering of minds, ideas and people capable of changing the way we see the world.</p><p className="muted">This is not just a stage. It is a space to question, connect and leave with a different point of view.</p><a className="text-link" href="#mission">OPEN THE MISSION <ArrowUpRight size={16} /></a></div>
           </div>
         </section>
 
@@ -152,7 +152,7 @@ export default function Home() {
         <section id="minds" className="section-pad board-section reveal-section">
           <div className="section-kicker"><span>04 / THE MINDS</span><span className="line" /></div>
           <div className="section-intro"><h2>People behind<br />the <em>signal.</em></h2><p>Three perspectives.<br />One idea in motion.</p></div>
-          <div className="dossier-grid">{speakers.map(([number, title, copy], i) => <a className="dossier-card" key={number} href="/register"><span className="dossier-number">CASE FILE {number}</span><div className="dossier-image" style={{ backgroundImage: `linear-gradient(180deg, transparent 35%, rgba(5,5,5,.88)), url(${[heroImage, boardImage, stageImage][i]})` }} /><span className="dossier-redact">██████████████</span><strong>{title}</strong><small>{copy}</small><ArrowUpRight /></a>)}</div>
+          <div className="dossier-grid">{speakers.map(([number, title, copy], i) => <a className="dossier-card" key={number} href="#register"><span className="dossier-number">CASE FILE {number}</span><div className="dossier-image" style={{ backgroundImage: `linear-gradient(180deg, transparent 35%, rgba(5,5,5,.88)), url(${[heroImage, boardImage, stageImage][i]})` }} /><span className="dossier-redact">██████████████</span><strong>{title}</strong><small>{copy}</small><ArrowUpRight /></a>)}</div>
         </section>
 
         <section id="scene" className="section-pad scene-section reveal-section">
@@ -165,7 +165,7 @@ export default function Home() {
           <div className="countdown-grid"><div><strong>15</strong><span>DAY</span></div><div><strong>11</strong><span>MONTH</span></div><div><strong>26</strong><span>YEAR</span></div><div><strong>TX</strong><span>STATUS</span></div></div>
         </section>
 
-        <section className="register-section reveal-section"><div className="register-inner"><div><span className="mono red">ACCESS PROTOCOL / 07</span><h2>Your seat<br />has been <em>identified.</em></h2><p>Register your interest and enter the archive.</p></div><a className="register-button" href="mailto:hello@tedxthyna.tn?subject=TEDx%20Thyna%20Registration">REGISTER NOW <ArrowUpRight size={22} /><small>ACCESS GRANTED</small></a></div></section>
+        <section id="register" className="register-section reveal-section"><div className="register-inner"><div><span className="mono red">ACCESS PROTOCOL / 07</span><h2>Your seat<br />has been <em>identified.</em></h2><p>Register your interest and enter the archive.</p></div><a className="register-button" href="mailto:hello@tedxthyna.tn?subject=TEDx%20Thyna%20Registration">REGISTER NOW <ArrowUpRight size={22} /><small>ACCESS GRANTED</small></a></div></section>
       </main>
 
       <footer className="footer"><div className="footer-brand"><img src={logoImage} alt="TEDx Thyna Youth" /><span>TEDx <b>THYNA</b></span><p>THE MISSION DOESN'T<br />END HERE.</p></div><div className="footer-links"><span className="mono">TRANSMISSION CHANNELS</span><a href="#">Instagram <Instagram size={15} /></a><a href="#">LinkedIn <Linkedin size={15} /></a><a href="mailto:hello@tedxthyna.tn">Contact <ArrowUpRight size={15} /></a></div><div className="footer-meta mono"><MapPin size={13} /> THÉÂTRE MUNICIPAL DE SFAX<br /><br /><CalendarDays size={13} /> 15 NOVEMBER 2026<br /><br /><Clock3 size={13} /> FILE STATUS: ACTIVE</div></footer>
