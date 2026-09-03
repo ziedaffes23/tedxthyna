@@ -5,20 +5,20 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import SectionPage from "./pages/SectionPage";
 
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      {/* Keep legacy URLs working while the experience remains one single page. */}
-      <Route path={"/mission"} component={Home} />
-      <Route path={"/board"} component={Home} />
-      <Route path={"/minds"} component={Home} />
-      <Route path={"/organization"} component={Home} />
-      <Route path={"/scene"} component={Home} />
-      <Route path={"/agenda"} component={Home} />
-      <Route path={"/register"} component={Home} />
+      <Route path={"/mission"}>{() => <SectionPage section="mission" />}</Route>
+      <Route path={"/board"}>{() => <SectionPage section="board" />}</Route>
+      <Route path={"/minds"}>{() => <SectionPage section="minds" />}</Route>
+      <Route path={"/organization"}>{() => <SectionPage section="organization" />}</Route>
+      <Route path={"/scene"}>{() => <SectionPage section="scene" />}</Route>
+      <Route path={"/agenda"}>{() => <SectionPage section="agenda" />}</Route>
+      <Route path={"/register"}>{() => <SectionPage section="register" />}</Route>
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
