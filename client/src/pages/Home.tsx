@@ -100,7 +100,7 @@ export default function Home() {
 
       <aside className="case-rail" aria-label="Case progress">
         <span className="rail-vertical">TEDx THYNA / 2026</span>
-        <span className="rail-progress">01 <i /> 07</span>
+        <span className="rail-progress">01 <i /> 08</span>
       </aside>
 
       <main id="top">
