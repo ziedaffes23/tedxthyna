@@ -23,6 +23,7 @@ const navigation = [
   ["MISSION", "#mission"],
   ["THE BOARD", "#board"],
   ["THE MINDS", "#minds"],
+  ["ORGANIZATION", "#organization"],
   ["THE SCENE", "#scene"],
   ["AGENDA", "#agenda"],
 ];
@@ -155,8 +156,14 @@ export default function Home() {
           <div className="dossier-grid">{speakers.map(([number, title, copy], i) => <a className="dossier-card" key={number} href="#register"><span className="dossier-number">CASE FILE {number}</span><div className="dossier-image" style={{ backgroundImage: `linear-gradient(180deg, transparent 35%, rgba(5,5,5,.88)), url(${[heroImage, boardImage, stageImage][i]})` }} /><span className="dossier-redact">██████████████</span><strong>{title}</strong><small>{copy}</small><ArrowUpRight /></a>)}</div>
         </section>
 
+        <section id="organization" className="section-pad team-section reveal-section">
+          <div className="section-kicker"><span>05 / THE ORGANIZATION</span><span className="line" /></div>
+          <div className="section-intro"><h2>The people<br />behind the <em>operation.</em></h2><p>One team.<br />One shared signal.</p></div>
+          <div className="team-list">{team.map(([number, name, role]) => <div className="team-file" key={number}><span className="team-number">{number}</span><div className="team-person"><span className="mono">PERSONNEL FILE {number}/04</span><strong>{name}</strong><small>{role}</small></div><div className="team-contact"><span className="mono">STATUS</span><span className="mono red">ACTIVE / ON SIGNAL</span></div><span className="team-status"><i /> ACTIVE</span></div>)}</div>
+        </section>
+
         <section id="scene" className="section-pad scene-section reveal-section">
-          <div className="section-kicker"><span>05 / THE SCENE</span><span className="line" /></div>
+          <div className="section-kicker"><span>06 / THE SCENE</span><span className="line" /></div>
           <div className="scene-card"><div className="scene-photo" style={{ backgroundImage: `url(${stageImage})` }}><span className="stamp">LOCATION<br />IDENTIFIED</span></div><div className="scene-info"><span className="mono red">OPERATION SITE / SFAX</span><h2>THÉÂTRE<br /><em>MUNICIPAL</em><br />DE SFAX</h2><p>Where ideas arrive, meet and move forward.</p><div className="scene-data"><span>DATE <b>15 NOVEMBER 2026</b></span><span>TIME <b>TO BE ANNOUNCED</b></span></div><a className="text-link" href="https://maps.google.com/?q=Theatre+Municipal+de+Sfax" target="_blank" rel="noreferrer">OPEN LOCATION <ArrowUpRight size={17} /></a></div></div>
         </section>
 
