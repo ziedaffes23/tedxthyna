@@ -4,8 +4,8 @@ import { ArrowDownRight, ArrowUpRight, Mail, Menu, X } from "lucide-react";
 const githubAsset = (filename: string) =>
   `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${filename}?v=f8febb8`;
 
-const heroImage = githubAsset("tedx-thyna-hero.jpg");
-const sceneImage = githubAsset("tedx-thyna-stage.jpg");
+const heroImage = githubAsset("tedx-thyna-sfax-night.jpg");
+const sceneImage = githubAsset("tedx-thyna-investigation-desk.jpg");
 const logoImage = githubAsset("tedx-thyna-logo.png");
 
 const navigation = [

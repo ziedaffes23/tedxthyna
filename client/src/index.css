@@ -489,3 +489,27 @@ body:before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;bac
 .reference-home .hero-location{color:var(--black)}.reference-home .hero-location .mono{color:var(--tedx-red)!important;font-weight:700}.reference-home .hero-location strong{color:var(--black)!important}.reference-home .hero-location span:last-child{color:#665956!important}.reference-home .hero-index{color:#665956!important}.reference-home .hero-index span{color:var(--tedx-red)!important}.reference-home .hero-scroll-cue{color:var(--black)!important;font-weight:700}
 .reference-home .button-red{color:var(--off-white)!important;background:var(--tedx-red)}
 @media(max-width:800px){.reference-home .reference-hero{background-image:linear-gradient(180deg,rgba(237,233,230,.97) 0%,rgba(237,233,230,.82) 52%,rgba(237,233,230,.4) 100%),url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-board.jpg?v=f8febb')!important;background-position:60% center}.reference-home .hero-support{color:#5d514d!important}.reference-home .hero-location{color:var(--black);background:rgba(237,233,230,.72)}}
+
+/* New art direction: Mediterranean night file / redacted editorial */
+.reference-home .reference-hero{background-image:linear-gradient(90deg,rgba(237,233,230,.98) 0%,rgba(237,233,230,.92) 44%,rgba(237,233,230,.28) 73%,rgba(0,0,0,.18) 100%),url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-sfax-night.jpg?v=f8febb')!important;background-size:cover;background-position:center;color:var(--ink);animation:none}
+.reference-home .reference-hero:before{background:linear-gradient(90deg,var(--paper) 0%,rgba(237,233,230,.94) 38%,rgba(237,233,230,.14) 73%,rgba(0,0,0,.2)),linear-gradient(0deg,rgba(195,43,48,.1),transparent 45%);clip-path:polygon(0 0,60% 0,51% 100%,0 100%);opacity:1}
+.reference-home .reference-hero:after{opacity:.04}
+.reference-home .hero-copy{max-width:580px;padding-left:25px;border-left:8px solid var(--red);animation:casefile-slide .9s .25s cubic-bezier(.23,1,.32,1) both}
+.reference-home .hero-title-wrap{position:relative}.reference-home .hero-title-wrap:before{content:'SFAX / FIELD REPORT 01';position:absolute;top:-28px;left:0;color:var(--red);font:700 9px 'IBM Plex Mono';letter-spacing:.2em}
+.reference-home .hero h1{font-size:clamp(78px,12vw,175px);letter-spacing:-.12em;line-height:.78}.reference-home .hero-tagline{font-size:clamp(30px,4vw,60px);margin-top:42px}.reference-home .hero-support{max-width:290px}
+.reference-home .hero-evidence-photo{right:11vw;bottom:17vh;width:235px;height:160px;background-image:url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-investigation-desk.jpg?v=f8febb')!important;transform:rotate(-6deg);border:6px solid var(--paper);outline:2px solid var(--red);box-shadow:18px 18px 0 rgba(195,43,48,.35);animation:photo-reveal 1s 1.1s cubic-bezier(.23,1,.32,1) both,photo-rock 6s 2.1s ease-in-out infinite alternate}
+.reference-home .hero-evidence-photo:before{content:'EXHIBIT A';position:absolute;z-index:3;right:-20px;top:10px;color:var(--red);font:700 9px 'IBM Plex Mono';letter-spacing:.17em;transform:rotate(90deg)}
+.reference-home .hero-grid-mark{right:24vw;top:17%;border-style:dashed;opacity:.4}
+.reference-home .hero-light{right:25%;top:15%;background:radial-gradient(circle,rgba(195,43,48,.28),transparent 65%);filter:blur(80px);opacity:.42}
+.reference-home .case-rail{left:1.8vw;top:43%;border-left:6px solid var(--red)}
+.mobile-intro{background-image:linear-gradient(90deg,rgba(0,0,0,.94),rgba(0,0,0,.38)),url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-investigation-desk.jpg?v=f8febb');background-position:center;background-size:cover}
+.mobile-intro:after{background:linear-gradient(135deg,rgba(195,43,48,.4),transparent 45%),linear-gradient(0deg,rgba(0,0,0,.6),transparent)}
+.mobile-intro-content{border-left:5px solid var(--red);padding-left:24px}
+.route-intro{background:var(--paper);border-bottom:8px solid var(--red)}
+.route-intro:before{content:'DOSSIER';color:rgba(195,43,48,.08);font-size:clamp(110px,18vw,280px);transform:rotate(-9deg);right:2vw;top:135px}
+.route-body{background:linear-gradient(90deg,transparent,rgba(226,221,215,.55) 50%,transparent);border-bottom:1px solid rgba(0,0,0,.18)}
+.board-frame{border-radius:0 38px 0 38px}.dossier-card:nth-child(1){border-top:7px solid var(--red)}.dossier-card:nth-child(2){border-top:7px solid var(--black)}.dossier-card:nth-child(3){border-top:7px solid var(--dust)}
+@keyframes casefile-slide{from{opacity:0;transform:translateX(-45px);clip-path:inset(0 100% 0 0)}to{opacity:1;transform:none;clip-path:inset(0 0 0 0)}}
+@keyframes photo-reveal{from{opacity:0;transform:translateY(45px) rotate(-16deg)}to{opacity:1;transform:rotate(-6deg)}}
+@keyframes photo-rock{to{transform:translateY(-10px) rotate(-2deg)}}
+@media(max-width:800px){.reference-home .reference-hero:before{clip-path:polygon(0 0,100% 0,100% 60%,0 78%);background:linear-gradient(180deg,var(--paper) 0%,rgba(237,233,230,.84) 52%,rgba(237,233,230,.2) 82%)}.reference-home .hero-copy{border-left-width:5px;padding-left:15px}.reference-home .hero-evidence-photo{right:8vw;bottom:13vh;width:145px;height:100px}.reference-home .hero-grid-mark{right:5vw;top:25%}.mobile-intro-content{padding-left:16px}}
