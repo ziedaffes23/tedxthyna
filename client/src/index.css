@@ -418,3 +418,19 @@ body:after{opacity:.035;mix-blend-mode:multiply}
 @keyframes intro-light-sweep{0%,100%{transform:translateX(-14%);opacity:.45}50%{transform:translateX(14%);opacity:.9}}
 @media(max-width:800px){.reference-home .reference-hero{background-position:58% 50%;animation-duration:22s}.reference-home .hero-light{right:-18%;top:25%;width:340px;height:340px}.reference-home .reference-hero .hero-title-wrap:after{bottom:-16px;width:80px}.mobile-intro{background-position:62% center}}
 @media(prefers-reduced-motion:reduce){.reference-home .reference-hero{animation:none}.reference-home .hero-copy,.reference-home .hero-location,.reference-home .hero-index,.reference-home .hero-scroll-cue{animation:none;opacity:1;transform:none}.mobile-intro:after{animation:none}}
+
+/* Homepage palette correction: warm editorial cover, not a dark hero */
+.reference-home{background:var(--off-white);color:var(--black)}
+.reference-home .reference-hero{color:var(--black);background-color:var(--off-white)!important;background-image:linear-gradient(90deg,rgba(237,233,230,.98) 0%,rgba(237,233,230,.9) 38%,rgba(237,233,230,.35) 66%,rgba(237,233,230,.12) 100%),url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-hero.jpg?v=f8febb')!important;background-blend-mode:normal;background-position:52% 50%;box-shadow:inset 0 -100px 120px rgba(0,0,0,.08)}
+.reference-home .reference-hero:before{background:linear-gradient(90deg,rgba(237,233,230,.92),rgba(237,233,230,.42) 58%,rgba(195,43,48,.12)),linear-gradient(180deg,rgba(237,233,230,.18),transparent 35%,rgba(0,0,0,.1));mix-blend-mode:normal}
+.reference-home .reference-hero:after{opacity:.07;mix-blend-mode:multiply}
+.reference-home .hero h1{color:var(--black);text-shadow:none}.reference-home .hero h1 span{-webkit-text-stroke:1px var(--black);text-shadow:none}
+.reference-home .hero-title-index,.reference-home .hero-location .mono,.reference-home .hero-index span{color:var(--tedx-red)}
+.reference-home .hero-support{color:#5d514d}.reference-home .hero-location{color:var(--black)}.reference-home .hero-location strong{color:var(--black)}.reference-home .hero-location span:last-child{color:#665956}
+.reference-home .hero-index,.reference-home .hero-scroll-cue{color:var(--black)}.reference-home .hero-scroll-cue span{background:linear-gradient(var(--tedx-red),transparent)!important}
+.reference-home .hero-grid-mark{border-color:var(--tedx-red);opacity:.7}.reference-home .hero-grid-mark:before{border-color:rgba(0,0,0,.32)}
+.reference-home .top-nav{background:rgba(237,233,230,.9);color:var(--black);border-bottom-color:rgba(0,0,0,.15)}.reference-home .top-nav.is-scrolled{background:rgba(237,233,230,.97)}
+.reference-home .brand,.reference-home .nav-links a,.reference-home .menu-toggle,.reference-home .nav-register{color:var(--black)!important}.reference-home .nav-links a{color:#5d514d!important}.reference-home .nav-links a:hover{color:var(--black)!important}
+.reference-home .case-rail{color:var(--black);background:rgba(237,233,230,.7);border-color:rgba(0,0,0,.22)}
+.mobile-intro{background-color:var(--off-white);color:var(--black);background-image:linear-gradient(110deg,rgba(237,233,230,.95),rgba(237,233,230,.68)),url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-stage.jpg?v=f8febb')}.mobile-intro-title,.mobile-intro-copy,.mobile-intro-kicker,.intro-close{color:var(--black)}.mobile-intro-kicker i{background:var(--tedx-red);box-shadow:0 0 12px var(--tedx-red)}
+@media(max-width:800px){.reference-home .reference-hero{background-position:62% 50%;background-image:linear-gradient(180deg,rgba(237,233,230,.95) 0%,rgba(237,233,230,.77) 50%,rgba(237,233,230,.34) 100%),url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-hero.jpg?v=f8febb')!important}.reference-home .hero-location{background:rgba(237,233,230,.56);padding:10px;border-left:2px solid var(--tedx-red)}}
