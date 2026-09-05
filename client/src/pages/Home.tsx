@@ -10,7 +10,6 @@ const logoImage = githubAsset("tedx-thyna-logo.png");
 
 const navigation = [
   ["MISSION", "/mission"],
-  ["THE BOARD", "/board"],
   ["THE MINDS", "/minds"],
   ["ORGANIZATION", "/organization"],
   ["THE SCENE", "/scene"],

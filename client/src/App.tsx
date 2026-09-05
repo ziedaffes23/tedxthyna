@@ -13,7 +13,6 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/mission"}>{() => <SectionPage section="mission" />}</Route>
-      <Route path={"/board"}>{() => <SectionPage section="board" />}</Route>
       <Route path={"/minds"}>{() => <SectionPage section="minds" />}</Route>
       <Route path={"/organization"}>{() => <SectionPage section="organization" />}</Route>
       <Route path={"/scene"}>{() => <SectionPage section="scene" />}</Route>
