@@ -19,6 +19,7 @@ function Router() {
       <Route path={"/scene"}>{() => <SectionPage section="scene" />}</Route>
       <Route path={"/agenda"}>{() => <SectionPage section="agenda" />}</Route>
       <Route path={"/register"}>{() => <SectionPage section="register" />}</Route>
+      <Route path={"/contact"}>{() => <SectionPage section="contact" />}</Route>
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

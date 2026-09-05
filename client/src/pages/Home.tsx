@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowDownRight, ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Mail, Menu, X } from "lucide-react";
 
 const githubAsset = (filename: string) =>
   `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${filename}?v=f8febb8`;
@@ -44,8 +44,8 @@ export default function Home() {
           <div className="mobile-intro-content">
             <span className="mobile-intro-kicker"><i /> TRANSMISSION / 01</span>
             <img className="intro-logo" src={logoImage} alt="TEDx Thyna Youth" />
-            <p className="mobile-intro-title">Ideas<br /><em>move us.</em></p>
-            <p className="mobile-intro-copy">A new signal is coming from Sfax.<br />Step into the story.</p>
+            <p className="mobile-intro-title">Become<br /><em>Part of the Story.</em></p>
+            <p className="mobile-intro-copy">A new signal is coming from Sfax.<br />Your story starts here.</p>
             <button className="mobile-intro-enter" onClick={() => setIntroVisible(false)}>ENTER THE EXPERIENCE <ArrowUpRight size={16} /></button>
           </div>
           <button className="mobile-intro-skip mono" onClick={() => setIntroVisible(false)}>SKIP INTRO <span>↗</span></button>
@@ -59,6 +59,7 @@ export default function Home() {
         </a>
         <div className="nav-links">
           {navigation.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
+          <a href="/contact">CONTACT <Mail size={14} /></a>
           <a className="nav-register" href="/register">REGISTER <ArrowUpRight size={14} /></a>
         </div>
         <button className="menu-toggle" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen}>
@@ -70,6 +71,7 @@ export default function Home() {
         <div className="mobile-menu">
           <span className="mono red">CLEARANCE: OPEN</span>
           {navigation.map(([label, href]) => <a key={href} href={href} onClick={closeMenu}>{label} <ArrowUpRight /></a>)}
+          <a href="/contact" onClick={closeMenu}>CONTACT <Mail /></a>
           <a href="/register" onClick={closeMenu}>REGISTER <ArrowUpRight /></a>
         </div>
       )}
