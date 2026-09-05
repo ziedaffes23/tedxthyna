@@ -2,9 +2,9 @@ import { ArrowDownRight, ArrowUpRight, Instagram, Linkedin, Mail, Send } from "l
 import { useState, type FormEvent, type ReactNode } from "react";
 
 const githubAsset = (filename: string) => `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${filename}?v=f8febb8`;
-const heroImage = githubAsset("tedx-thyna-hero.jpg");
-const boardImage = githubAsset("tedx-thyna-board.jpg");
-const stageImage = githubAsset("tedx-thyna-stage.jpg");
+const heroImage = githubAsset("tedx-thyna-noir-dossier.jpg");
+const boardImage = githubAsset("tedx-thyna-noir-hero.jpg");
+const stageImage = githubAsset("tedx-thyna-noir-hero.jpg");
 const logoImage = githubAsset("tedx-thyna-logo.png");
 
 const team = [

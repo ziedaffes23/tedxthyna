@@ -513,3 +513,9 @@ body:before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;bac
 @keyframes photo-reveal{from{opacity:0;transform:translateY(45px) rotate(-16deg)}to{opacity:1;transform:rotate(-6deg)}}
 @keyframes photo-rock{to{transform:translateY(-10px) rotate(-2deg)}}
 @media(max-width:800px){.reference-home .reference-hero:before{clip-path:polygon(0 0,100% 0,100% 60%,0 78%);background:linear-gradient(180deg,var(--paper) 0%,rgba(237,233,230,.84) 52%,rgba(237,233,230,.2) 82%)}.reference-home .hero-copy{border-left-width:5px;padding-left:15px}.reference-home .hero-evidence-photo{right:8vw;bottom:13vh;width:145px;height:100px}.reference-home .hero-grid-mark{right:5vw;top:25%}.mobile-intro-content{padding-left:16px}}
+
+/* Final art assets: original TEDx noir-mafia imagery */
+.reference-home .reference-hero{background-image:linear-gradient(90deg,rgba(237,233,230,.96) 0%,rgba(237,233,230,.86) 36%,rgba(237,233,230,.18) 72%,rgba(0,0,0,.2)),url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-noir-hero.jpg?v=f8febb8')!important;background-position:center;background-size:cover}
+.reference-home .hero-evidence-photo{background-image:url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-noir-dossier.jpg?v=f8febb8')!important}
+.mobile-intro{background-image:linear-gradient(90deg,rgba(0,0,0,.9),rgba(0,0,0,.3)),url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-noir-dossier.jpg?v=f8febb8')!important;background-size:cover;background-position:center}
+@media(max-width:800px){.reference-home .reference-hero{background-image:linear-gradient(180deg,rgba(237,233,230,.95),rgba(237,233,230,.62) 58%,rgba(0,0,0,.18)),url('https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/tedx-thyna-noir-hero.jpg?v=f8febb8')!important}}
