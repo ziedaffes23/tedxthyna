@@ -5,6 +5,7 @@ const githubAsset = (filename: string) =>
   `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${filename}?v=f8febb8`;
 
 const heroImage = githubAsset("tedx-thyna-hero.jpg");
+const sceneImage = githubAsset("tedx-thyna-stage.jpg");
 const logoImage = githubAsset("tedx-thyna-logo.png");
 
 const navigation = [
@@ -27,12 +28,6 @@ export default function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const timer = window.setTimeout(() => setIntroVisible(false), reducedMotion ? 200 : 2600);
-    return () => window.clearTimeout(timer);
-  }, []);
-
   const closeMenu = () => setMenuOpen(false);
 
   return (
@@ -42,13 +37,14 @@ export default function Home() {
           <div className="mobile-intro-grid" aria-hidden="true" />
           <div className="mobile-intro-scan" aria-hidden="true" />
           <div className="mobile-intro-content">
-            <span className="mobile-intro-kicker"><i /> TRANSMISSION / 01</span>
+            <span className="mobile-intro-kicker"><i /> TRANSMISSION / 01 <b>15 SEC DOSSIER OPENING</b></span>
             <img className="intro-logo" src={logoImage} alt="TEDx Thyna Youth" />
             <p className="mobile-intro-title">Become<br /><em>Part of the Story.</em></p>
             <p className="mobile-intro-copy">A new signal is coming from Sfax.<br />Your story starts here.</p>
             <button className="mobile-intro-enter" onClick={() => setIntroVisible(false)}>ENTER THE EXPERIENCE <ArrowUpRight size={16} /></button>
           </div>
-          <button className="mobile-intro-skip mono" onClick={() => setIntroVisible(false)}>SKIP INTRO <span>↗</span></button>
+          <div className="intro-progress" aria-hidden="true"><span /></div>
+          <button className="intro-close" onClick={() => setIntroVisible(false)} aria-label="Close intro"><X size={22} /><span className="mono">CLOSE INTRO</span></button>
         </section>
       )}
 
@@ -85,6 +81,7 @@ export default function Home() {
         <section className="hero scene reference-hero" style={{ backgroundImage: `linear-gradient(90deg, rgba(5,5,5,.95) 0%, rgba(5,5,5,.64) 50%, rgba(5,5,5,.28)), url(${heroImage})` }}>
           <div className="hero-light" />
           <div className="hero-grid-mark" aria-hidden="true"><span /><span /></div>
+          <div className="hero-evidence-photo" style={{ backgroundImage: `url(${sceneImage})` }} aria-label="Theatre Municipal de Sfax stage detail"><span>FIELD PHOTO / 02</span></div>
           <div className="hero-copy">
             <div className="eyebrow"><span className="status-dot" />SIGNAL DETECTED / SFAX / TX-2026</div>
             <div className="hero-title-wrap">
