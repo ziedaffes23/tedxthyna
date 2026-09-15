@@ -564,3 +564,39 @@ body:before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;bac
 .route-shell .route-nav{position:fixed;top:0;left:0;right:0;z-index:80}
 .route-shell .mobile-menu{position:fixed;top:72px;left:0;right:0;z-index:79;max-height:calc(100vh - 72px);overflow:auto}
 @media(max-width:800px){.reference-home-v2 main{padding-top:68px}.route-shell{padding-top:68px}.route-shell .route-nav{height:68px}.route-shell .mobile-menu{top:68px;max-height:calc(100vh - 68px)}}
+/* Site-wide editorial motion system */
+@keyframes site-page-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes site-nav-in{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+@keyframes site-line-in{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1);transform-origin:left}}
+@keyframes site-fade-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes site-soft-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes site-image-in{from{opacity:0;clip-path:inset(0 0 100% 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes site-pulse-line{0%,100%{opacity:.45}50%{opacity:1}}
+.reference-home-v2 .reference-header,.route-shell .route-nav{animation:site-nav-in .7s cubic-bezier(.2,.8,.2,1) both}
+.reference-home-v2 .reference-hero-v2{animation:site-page-in .85s .1s cubic-bezier(.2,.8,.2,1) both}
+.reference-home-v2 .hero-main-copy .reference-kicker{animation:site-fade-up .6s .2s both}
+.reference-home-v2 .hero-main-copy h1{animation:site-fade-up .85s .32s cubic-bezier(.2,.8,.2,1) both}
+.reference-home-v2 .hero-support-copy{animation:site-fade-up .7s .55s both}
+.reference-home-v2 .hero-stamp{animation:site-fade-up .6s .7s both,site-soft-float 5s 1.4s ease-in-out infinite}
+.reference-home-v2 .hero-bottom-meta{animation:site-fade-up .65s .78s both}
+.reference-home-v2 .hero-bottom-meta:before{content:'';position:absolute;left:0;right:0;top:-1px;height:1px;background:var(--ref-red);animation:site-line-in 1s 1s both}
+.reference-home-v2 .hero-orbit{animation:site-soft-float 9s ease-in-out infinite}
+.reference-home-v2 .orbit-two{animation-delay:-3s;animation-duration:12s}
+.reference-home-v2 .hero-grid-mark-v2{animation:site-soft-float 6s -1s ease-in-out infinite,site-pulse-line 4s ease-in-out infinite}
+.reference-home-v2 .story-intro,.reference-home-v2 .story-links,.reference-home-v2 .reference-final-cta,.reference-home-v2 .reference-footer{animation:site-fade-up .8s both}
+.reference-home-v2 .story-links a{transition:padding-left .3s ease,color .3s ease,background-color .3s ease}
+.reference-home-v2 .story-links a:nth-child(1){animation:site-fade-up .55s .12s both}.reference-home-v2 .story-links a:nth-child(2){animation:site-fade-up .55s .24s both}.reference-home-v2 .story-links a:nth-child(3){animation:site-fade-up .55s .36s both}
+.reference-home-v2 .outline-cta,.route-shell a,.route-shell button{transition:color .25s ease,background-color .25s ease,border-color .25s ease,transform .25s ease,box-shadow .25s ease}
+.reference-home-v2 .outline-cta:hover{box-shadow:4px 4px 0 rgba(196,43,49,.18)}
+.route-shell .route-intro{animation:site-page-in .75s .08s both}
+.route-shell .route-intro .section-kicker{animation:site-fade-up .55s .2s both}
+.route-shell .route-intro-grid>div{animation:site-fade-up .7s .3s both}
+.route-shell .route-intro-grid>p{animation:site-fade-up .65s .48s both}
+.route-shell .route-body{animation:site-fade-up .8s .4s both}
+.route-shell .route-body .classified-strip,.route-shell .route-body .evidence-note{animation:site-fade-up .6s .55s both}
+.route-shell .route-body .route-panel,.route-shell .route-body .agenda-card,.route-shell .route-body .register-panel,.route-shell .route-body .contact-layout{animation:site-fade-up .7s .68s both}
+.route-shell .dossier-card{animation:site-fade-up .65s both;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .25s ease}.route-shell .dossier-card:nth-child(1){animation-delay:.5s}.route-shell .dossier-card:nth-child(2){animation-delay:.65s}.route-shell .dossier-card:nth-child(3){animation-delay:.8s}.route-shell .dossier-card:hover{transform:translateY(-10px) rotate(-1deg);box-shadow:10px 14px 0 rgba(195,43,48,.2)}
+.route-shell .team-file{animation:site-fade-up .55s both;transition:transform .25s ease,border-color .25s ease}.route-shell .team-file:nth-child(1){animation-delay:.5s}.route-shell .team-file:nth-child(2){animation-delay:.6s}.route-shell .team-file:nth-child(3){animation-delay:.7s}.route-shell .team-file:nth-child(4){animation-delay:.8s}.route-shell .team-file:hover{transform:translateX(8px);border-color:var(--red)}
+.route-shell .scene-photo,.route-shell .dossier-image{animation:site-image-in 1s .5s both}.route-shell .scene-card,.route-shell .board-frame{animation:site-fade-up .8s .45s both}.route-shell .text-link:hover,.route-shell .nav-register:hover,.route-shell .register-button:hover,.route-shell .button:hover{transform:translateY(-3px)}
+.route-shell .footer{animation:site-fade-up .8s .8s both}.route-shell .footer-brand img{transition:transform .35s ease}.route-shell .footer-brand:hover img{transform:translateX(6px)}
+@media(prefers-reduced-motion:reduce){.reference-home-v2 *,.route-shell *{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}}
