@@ -557,3 +557,10 @@ body:before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;bac
 .route-shell .route-intro h1{font-weight:800;letter-spacing:-.11em}
 .route-shell .route-panel h2,.route-shell .register-panel h2,.route-shell .agenda-card h2{font-weight:700;letter-spacing:-.1em}
 .route-shell .mobile-menu a{font-weight:600;letter-spacing:-.04em}
+/* Keep navigation visible across every page */
+.reference-home-v2 .reference-header{position:fixed;top:0;left:0;right:0;z-index:80}
+.reference-home-v2 main{padding-top:75px}
+.route-shell{padding-top:72px}
+.route-shell .route-nav{position:fixed;top:0;left:0;right:0;z-index:80}
+.route-shell .mobile-menu{position:fixed;top:72px;left:0;right:0;z-index:79;max-height:calc(100vh - 72px);overflow:auto}
+@media(max-width:800px){.reference-home-v2 main{padding-top:68px}.route-shell{padding-top:68px}.route-shell .route-nav{height:68px}.route-shell .mobile-menu{top:68px;max-height:calc(100vh - 68px)}}
