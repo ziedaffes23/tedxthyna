@@ -5,7 +5,7 @@ const githubAsset = (filename: string) => `https://raw.githubusercontent.com/zie
 const heroImage = githubAsset("tedx-thyna-noir-dossier.jpg");
 const boardImage = githubAsset("tedx-thyna-noir-hero.jpg");
 const stageImage = githubAsset("tedx-thyna-noir-hero.jpg");
-const logoImage = githubAsset("tedx-thyna-logo.png");
+const logoImage = "/tedx-thyna-wordmark.png";
 
 const team = [
   ["Abderrahmen Bouderbela", "Event President & Head of Partnerships", "abderrahmen.bouderbela@tedxthyna.com"],
@@ -26,7 +26,7 @@ function SiteNav() {
   const close = () => setMenuOpen(false);
   return <>
     <nav className="top-nav is-scrolled route-nav" aria-label="Primary navigation">
-      <a className="brand" href="/" onClick={close}><img src={logoImage} alt="" /><span>TEDx <b>THYNA</b></span></a>
+      <a className="brand" href="/" onClick={close}><img src={logoImage} alt="TEDx Thyna" /></a>
       <div className="nav-links">{navItems.map(([label, href]) => <a key={href} href={href}>{label}</a>)}<a href="/contact">CONTACT <Mail size={14} /></a><a className="nav-register" href="/register">REGISTER <ArrowUpRight size={14} /></a></div>
       <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close navigation" : "Open navigation"}>{menuOpen ? "×" : "☰"}</button>
     </nav>
@@ -53,5 +53,5 @@ function Contact() {
 
 export default function SectionPage({ section }: { section: "mission" | "minds" | "organization" | "scene" | "agenda" | "register" | "contact" }) {
   const Page = { mission: Mission, minds: Minds, organization: Organization, scene: Scene, agenda: Agenda, register: Register, contact: Contact }[section];
-  return <div className="site-shell route-shell"><SiteNav /><Page /><footer className="footer"><div className="footer-brand"><img src={logoImage} alt="TEDx Thyna Youth" /><span>TEDx <b>THYNA</b></span><p>THE MISSION DOESN'T<br />END HERE.</p></div><div className="footer-links"><span className="mono">TRANSMISSION CHANNELS</span><a href="https://www.instagram.com/tedxthyna/" target="_blank" rel="noreferrer">Instagram <Instagram size={15} /></a><a href="https://www.linkedin.com/m/company/tedxthyna-youth/" target="_blank" rel="noreferrer">LinkedIn <Linkedin size={15} /></a><a href="/contact">Contact <ArrowUpRight size={15} /></a></div><div className="footer-meta mono">THÉÂTRE MUNICIPAL DE SFAX<br /><br />FILE STATUS: ACTIVE<br />CASE Nº: TX-2026</div></footer></div>;
+  return <div className="site-shell route-shell"><SiteNav /><Page /><footer className="footer"><div className="footer-brand"><img src={logoImage} alt="TEDx Thyna Youth" /><p>THE MISSION DOESN'T<br />END HERE.</p></div><div className="footer-links"><span className="mono">TRANSMISSION CHANNELS</span><a href="https://www.instagram.com/tedxthyna/" target="_blank" rel="noreferrer">Instagram <Instagram size={15} /></a><a href="https://www.linkedin.com/m/company/tedxthyna-youth/" target="_blank" rel="noreferrer">LinkedIn <Linkedin size={15} /></a><a href="/contact">Contact <ArrowUpRight size={15} /></a></div><div className="footer-meta mono">THÉÂTRE MUNICIPAL DE SFAX<br /><br />FILE STATUS: ACTIVE<br />CASE Nº: TX-2026</div></footer></div>;
 }
