@@ -1,81 +1,26 @@
-import { useEffect, useState } from "react";
-import { ArrowDownRight, ArrowUpRight, Mail, Menu, X } from "lucide-react";
+import { useState } from "react";
+import { ArrowDown, ArrowUpRight, FileText, Fingerprint, MapPin, Menu, Search, ShieldAlert, X } from "lucide-react";
 
-const githubAsset = (filename: string) =>
-  `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${filename}?v=f8febb8`;
-
-const heroImage = githubAsset("tedx-thyna-hero.jpg");
-const stageImage = githubAsset("tedx-thyna-stage.jpg");
-const boardImage = githubAsset("tedx-thyna-board.jpg");
-const logoImage = githubAsset("tedx-thyna-logo.png");
-
-const navigation = [
-  ["MISSION", "/mission"],
-  ["THE MINDS", "/minds"],
-  ["ORGANIZATION", "/organization"],
-  ["THE SCENE", "/scene"],
-  ["AGENDA", "/agenda"],
-];
+const asset = (name: string) => `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${name}?v=f8febb8`;
+const images = { board: asset("tedx-thyna-board.jpg"), hero: asset("tedx-thyna-noir-hero.jpg"), desk: asset("tedx-thyna-investigation-desk.jpg"), night: asset("tedx-thyna-sfax-night.jpg"), dossier: asset("tedx-thyna-noir-dossier.jpg"), stage: asset("tedx-thyna-stage.jpg"), logo: asset("tedx-thyna-logo.png") };
+const nav = [["CASE FILES", "#cases"], ["INVESTIGATIONS", "#connection"], ["EVIDENCE", "#evidence"], ["SUSPECTS", "#suspects"], ["INTELLIGENCE", "#timeline"]];
+const cases = [{ no: "014", name: "THE BLACK ROSE", status: "ACTIVE", location: "UNKNOWN", evidence: "27 ITEMS", threat: "HIGH", update: "14.08.2026", desc: "A symbol appearing across three cities. No witness has been able to explain its origin.", image: images.hero }, { no: "009", name: "THE ARCHITECT", status: "REOPENED", location: "TUNIS / SFAX", evidence: "41 ITEMS", threat: "CRITICAL", update: "02.06.2026", desc: "Every connection leads back to a name that was removed from the record.", image: images.desk }, { no: "021", name: "THE LAST SIGNAL", status: "MONITORED", location: "MEDITERRANEAN", evidence: "12 ITEMS", threat: "MEDIUM", update: "27.05.2026", desc: "A transmission intercepted at 02:14. The message contained only coordinates.", image: images.night }];
+const evidence = [["024", "PHOTOGRAPH", "14.08.2026", images.dossier], ["031", "SURVEILLANCE STILL", "09.08.2026", images.night], ["007", "DOCUMENT", "22.07.2026", images.desk], ["018", "LOCATION MAP", "03.06.2026", images.board]];
+const people = [{ subject: "07", alias: "THE ARCHITECT", status: "MISSING", affiliation: "UNKNOWN", last: "TUNIS / 02:14", image: images.desk }, { subject: "12", alias: "THE OBSERVER", status: "LOCATED", affiliation: "NORTH DIVISION", last: "SFAX / 18:42", image: images.night }, { subject: "03", alias: "THE COURIER", status: "UNCONFIRMED", affiliation: "RED NETWORK", last: "UNKNOWN / 00:31", image: images.hero }];
 
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  const closeMenu = () => setMenuOpen(false);
-
-  return (
-    <div className="editorial-home">
-      <nav className={`editorial-nav ${scrolled ? "is-scrolled" : ""}`}>
-        <a className="editorial-brand" href="/" onClick={closeMenu} aria-label="TEDx Thyna home">
-          <img src={logoImage} alt="" /><span>TEDx <b>THYNA</b></span>
-        </a>
-        <div className="editorial-links">
-          {navigation.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
-          <a href="/contact">CONTACT <Mail size={14} /></a>
-          <a className="editorial-register" href="/register">REGISTER <ArrowUpRight size={14} /></a>
-        </div>
-        <button className="editorial-menu" onClick={() => setMenuOpen((open) => !open)} aria-label="Toggle menu">
-          {menuOpen ? <X /> : <Menu />}
-        </button>
-      </nav>
-      {menuOpen && <div className="editorial-mobile-menu">{navigation.map(([label, href]) => <a key={href} href={href} onClick={closeMenu}>{label}<ArrowUpRight /></a>)}<a href="/contact" onClick={closeMenu}>CONTACT<Mail /></a><a href="/register" onClick={closeMenu}>REGISTER<ArrowUpRight /></a></div>}
-
-      <main>
-        <section className="editorial-hero">
-          <div className="hero-copy-new">
-            <p className="issue-label"><span>01</span> TEDx THYNA / SFAX / 2026</p>
-            <h1>Ideas<br /><i>in motion.</i></h1>
-            <p className="hero-deck">A new generation of voices is shaping what comes next. Meet them in the heart of Sfax.</p>
-            <div className="hero-actions-new"><a className="primary-cta" href="/register">SAVE YOUR SEAT <ArrowUpRight size={17} /></a><a className="secondary-cta" href="#story">EXPLORE THE STORY <ArrowDownRight size={17} /></a></div>
-          </div>
-          <div className="hero-image-new" style={{ backgroundImage: `url(${heroImage})` }}><span className="image-tag">SFAX / 15.11.26</span><span className="image-caption">A stage for the next<br />conversation.</span></div>
-          <div className="hero-side-note">THEME<br /><strong>THE NEXT<br />CHAPTER</strong></div>
-          <div className="hero-bottom-line"><span>INDEPENDENTLY ORGANIZED TED EVENT</span><span>SCROLL TO DISCOVER ↓</span></div>
-        </section>
-
-        <section className="intro-editorial" id="story">
-          <div className="section-number">02 / WHY TEDx THYNA</div>
-          <div className="intro-statement"><p className="eyebrow-new">ONE CITY. MANY FUTURES.</p><h2>What if the<br /><em>next idea</em><br />starts here?</h2></div>
-          <div className="intro-detail"><p>TEDx Thyna brings curious people together to share ideas worth spreading. From Sfax to everywhere, we are making room for brave questions, unexpected connections, and the people who move us forward.</p><a className="round-link" href="/mission">READ OUR MISSION <ArrowUpRight size={18} /></a></div>
-        </section>
-
-        <section className="feature-editorial">
-          <div className="feature-image" style={{ backgroundImage: `url(${stageImage})` }}><span>03 / THE STAGE</span></div>
-          <div className="feature-copy"><p className="eyebrow-new">THE SCENE</p><h2>Where a<br /><em>city</em><br />speaks.</h2><p>The historic Théâtre Municipal de Sfax becomes a meeting point for ideas, stories, and the energy of a city in motion.</p><a className="text-link-new" href="/scene">DISCOVER THE VENUE <ArrowUpRight size={17} /></a></div>
-        </section>
-
-        <section className="voices-editorial">
-          <div><p className="eyebrow-new">04 / THE MINDS</p><h2>Fresh<br /><em>perspectives.</em></h2></div>
-          <div className="voice-grid"><article><span>01</span><div className="voice-image" style={{ backgroundImage: `url(${boardImage})` }} /><h3>People who<br />question the usual.</h3></article><article><span>02</span><div className="voice-image" style={{ backgroundImage: `url(${heroImage})` }} /><h3>Stories that<br />stay with you.</h3></article><article><span>03</span><div className="voice-image" style={{ backgroundImage: `url(${stageImage})` }} /><h3>A room built<br />for possibility.</h3></article></div>
-        </section>
-
-        <section className="closing-editorial"><p className="eyebrow-new">15 NOVEMBER 2026 / SFAX, TUNISIA</p><h2>Be there for<br /><em>the next idea.</em></h2><a className="primary-cta" href="/register">REGISTER YOUR INTEREST <ArrowUpRight size={17} /></a></section>
-      </main>
-      <footer className="editorial-footer"><div className="footer-brand-new"><img src={logoImage} alt="TEDx Thyna" /><span>TEDx <b>THYNA</b></span></div><p>Ideas move us.<br />See you in Sfax.</p><div className="footer-links-new"><a href="https://www.instagram.com/tedxthyna/" target="_blank" rel="noreferrer">Instagram</a><a href="/contact">Contact</a><span>© 2026 TEDx Thyna</span></div></footer>
-    </div>
-  );
+  const [menu, setMenu] = useState(false); const [selected, setSelected] = useState("THE ARCHITECT");
+  return <div className="archive-home">
+    <nav className="archive-nav"><a href="/" className="archive-brand"><img src={images.logo} alt="" /><span>THYNA <b>INTELLIGENCE</b></span></a><div className="archive-links">{nav.map(([label, href]) => <a href={href} key={href}>{label}</a>)}</div><div className="archive-status"><i /> SYSTEM ONLINE <Search size={14} /></div><button className="archive-menu" onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button></nav>
+    {menu && <div className="archive-mobile-menu">{nav.map(([label, href]) => <a href={href} key={href} onClick={() => setMenu(false)}>{label}<ArrowUpRight size={15} /></a>)}<a href="/contact">ACCESS / LOGIN<ArrowUpRight size={15} /></a></div>}
+    <main>
+      <section className="archive-hero"><div className="hero-noise" /><div className="hero-content"><p className="archive-kicker"><i /> RESTRICTED INVESTIGATION DATABASE / CLEARANCE 04</p><h1>EVERY SECRET<br /><em>LEAVES A TRACE.</em></h1><p className="hero-sub">Access the investigation archive.<br />Follow the evidence. Uncover what they tried to bury.</p><div className="archive-actions"><a className="archive-button" href="#cases">ENTER THE ARCHIVE <ArrowUpRight size={16} /></a><a className="archive-text-link" href="#connection">VIEW ACTIVE CASES <ArrowDown size={16} /></a></div></div><div className="hero-file"><span>CASE FILE / 2026</span><strong>CONFIDENTIAL</strong><div className="hero-file-photo" style={{ backgroundImage: `url(${images.board})` }} /><small>COORDINATES: 34°44' N / 10°45' E<br />SOURCE: FIELD ARCHIVE / SFAX</small></div><div className="hero-meta"><span>ARCHIVE // 001</span><span>LAST SYNC 02:14:38</span></div></section>
+      <section className="archive-section cases-section" id="cases"><div className="section-head"><div><span className="section-code">01 / CASE FILES</span><h2>ACTIVE <em>CASES</em></h2></div><p>Three files remain open.<br />One of them is connected to you.</p></div><div className="case-list">{cases.map((item) => <article className="case-card" key={item.no}><div className="case-card-top"><span>CASE {item.no}</span><b>{item.status}</b></div><div className="case-card-body"><div className="case-thumb" style={{ backgroundImage: `url(${item.image})` }} /><div className="case-info"><h3>{item.name}</h3><p>{item.desc}</p><div className="case-stats"><span>LOCATION <b>{item.location}</b></span><span>EVIDENCE <b>{item.evidence}</b></span><span>THREAT <b className="danger">{item.threat}</b></span></div></div><div className="case-update"><span>LAST UPDATE</span><b>{item.update}</b><ArrowUpRight /></div></div><div className="classification-line" /></article>)}</div></section>
+      <section className="connection-section" id="connection"><div className="section-head light"><div><span className="section-code">02 / INVESTIGATION BOARD</span><h2>THE <em>CONNECTION</em></h2></div><p>Select an item to reveal its relationship.<br />All connections are unverified.</p></div><div className="board-wrap"><div className="evidence-board" style={{ backgroundImage: `linear-gradient(rgba(8,8,7,.2),rgba(8,8,7,.55)), url(${images.board})` }}><span className="board-stamp">CLASSIFIED<br /><small>THYNA / 014</small></span><div className="board-line line-a" /><div className="board-line line-b" /><div className="board-line line-c" /><button className={`board-pin pin-a ${selected === "THE ARCHITECT" ? "selected" : ""}`} onClick={() => setSelected("THE ARCHITECT")}><img src={images.desk} alt="" /><b>SUBJECT 07</b><small>THE ARCHITECT</small></button><button className={`board-pin pin-b ${selected === "THE BLACK ROSE" ? "selected" : ""}`} onClick={() => setSelected("THE BLACK ROSE")}><span className="pin-document"><FileText /></span><b>CASE 014</b><small>THE BLACK ROSE</small></button><button className={`board-pin pin-c ${selected === "SFAX" ? "selected" : ""}`} onClick={() => setSelected("SFAX")}><span className="pin-document"><MapPin /></span><b>LOCATION 03</b><small>SFAX / TUNISIA</small></button><button className={`board-pin pin-d ${selected === "EVIDENCE" ? "selected" : ""}`} onClick={() => setSelected("EVIDENCE")}><span className="pin-document"><Fingerprint /></span><b>EVIDENCE 024</b><small>ORIGIN UNKNOWN</small></button></div><aside className="board-detail"><span className="section-code">SELECTED NODE</span><h3>{selected}</h3><p>Connection status: <b>UNVERIFIED</b></p><div className="detail-rule" /><span className="mono-label">ASSOCIATED FILES</span><p>CASE 014 / SUBJECT 07<br />LOCATION 03 / EVIDENCE 024</p><a href="#evidence">OPEN FULL RECORD <ArrowUpRight size={15} /></a></aside></div></section>
+      <section className="archive-section evidence-section" id="evidence"><div className="section-head"><div><span className="section-code">03 / EVIDENCE ARCHIVE</span><h2>EVIDENCE <em>// ARCHIVE</em></h2></div><p>Recovered, verified, and indexed.<br />Some files remain redacted.</p></div><div className="evidence-grid">{evidence.map(([no, type, date, image]) => <article className="evidence-item" key={no}><div className="evidence-image" style={{ backgroundImage: `url(${image})` }}><span>#{no}</span><b>VERIFIED</b></div><div><span className="mono-label">EVIDENCE #{no}</span><h3>{type}</h3><p>DATE: {date} / STATUS: VERIFIED</p></div></article>)}</div></section>
+      <section className="suspect-section" id="suspects"><div className="section-head light"><div><span className="section-code">04 / SUSPECT DATABASE</span><h2>PERSONS OF <em>INTEREST</em></h2></div><p>Profiles recovered from the intelligence index.<br />Identity records partially redacted.</p></div><div className="suspect-grid">{people.map((person) => <article className="suspect-card" key={person.subject}><div className="mugshot" style={{ backgroundImage: `linear-gradient(0deg,rgba(8,8,7,.9),transparent 60%),url(${person.image})` }}><span>SUBJECT {person.subject}</span><b>{person.status}</b></div><div className="suspect-details"><h3>“{person.alias}”</h3><p>AFFILIATION <b>{person.affiliation}</b></p><p>LAST SEEN <b>{person.last}</b></p></div></article>)}</div></section>
+      <section className="archive-section timeline-section" id="timeline"><div className="section-head"><div><span className="section-code">05 / DOCUMENT HISTORY</span><h2>CASE <em>TIMELINE</em></h2></div></div><div className="timeline">{[["1987", "ORIGIN", "First record entered into the archive."], ["2004", "FIRST CONNECTION", "The names begin to repeat."], ["2012", "THE DISAPPEARANCE", "Three files removed from the system."], ["2019", "THE RETURN", "A redacted message surfaces in Sfax."], ["2026", "CASE REOPENED", "Investigation status changed to active."]].map(([year, title, text]) => <div className="timeline-event" key={year}><strong>{year}</strong><div><span>{title}</span><p>{text}</p></div></div>)}</div></section>
+      <section className="classified-section"><div className="document-paper"><span className="paper-stamp">CONFIDENTIAL</span><span className="section-code">CASE REPORT 014 / RESTRICTED ACCESS</span><h2>INVESTIGATION<br /><em>SUMMARY</em></h2><p>“The subject was seen entering the archive at 02:14. No exit was recorded.”</p><div className="redacted">████████████████████<br />████ ███████ ███████<br />████████████████████</div><small>FILE REF: TX-014 / SIGNATURE: [REDACTED] / 15.11.2026</small></div><div className="document-copy"><span className="section-code">06 / CLASSIFIED DOCUMENTS</span><h2>Every file<br />has a <em>version.</em></h2><p>Some truths are better understood in fragments. Open the archive, follow the marks, and decide what belongs in the record.</p><a className="archive-button" href="/register">REQUEST ACCESS <ArrowUpRight size={16} /></a></div></section>
+    </main><footer className="archive-footer"><div className="archive-brand"><img src={images.logo} alt="" /><span>THYNA <b>INTELLIGENCE</b></span></div><div className="footer-status"><span>ARCHIVE STATUS: <b>ONLINE</b></span><span>DATABASE ENCRYPTION: <b>ACTIVE</b></span><span>LAST SYNCHRONIZATION: <b>02:14:38</b></span></div><div className="footer-nav"><a href="/contact">CONTACT</a><a href="/register">ACCESS / LOGIN</a><span>© 2026 / ALL RECORDS CLASSIFIED</span></div></footer>
+  </div>;
 }
