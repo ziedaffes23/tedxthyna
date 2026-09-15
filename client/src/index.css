@@ -549,3 +549,11 @@ body:before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;bac
 .route-shell .footer-brand{display:flex;flex-direction:column;align-items:flex-start}
 .route-shell .footer-brand img{width:220px;height:auto;max-height:42px;object-fit:contain;object-position:left center;margin-bottom:22px}
 @media(max-width:800px){.route-shell .route-nav .brand img{width:150px;max-height:28px}.route-shell .footer-brand img{width:190px;max-height:36px}}
+/* Match route pages to the homepage typography system */
+.route-shell{font-family:'DM Sans',sans-serif}
+.route-shell h1,.route-shell h2,.route-shell h3,.route-shell .brand,.route-shell .nav-links,.route-shell .mobile-menu a,.route-shell .display-quote,.route-shell .route-panel h2,.route-shell .register-panel h2,.route-shell .agenda-card h2,.route-shell .scene-info h2,.route-shell .contact-details h2,.route-shell .team-person strong,.route-shell .dossier-card strong{font-family:'Space Grotesk',sans-serif}
+.route-shell .mono,.route-shell .section-kicker,.route-shell .nav-register,.route-shell .text-link,.route-shell .stamp,.route-shell .button,.route-shell .footer-meta,.route-shell .footer-links,.route-shell .register-button,.route-shell .contact-email,.route-shell .contact-social,.route-shell .scene-data,.route-shell .dossier-number,.route-shell .dossier-redact,.route-shell .team-status{font-family:'IBM Plex Mono',monospace}
+.route-shell p,.route-shell li,.route-shell input,.route-shell textarea,.route-shell label{font-family:'DM Sans',sans-serif}
+.route-shell .route-intro h1{font-weight:800;letter-spacing:-.11em}
+.route-shell .route-panel h2,.route-shell .register-panel h2,.route-shell .agenda-card h2{font-weight:700;letter-spacing:-.1em}
+.route-shell .mobile-menu a{font-weight:600;letter-spacing:-.04em}
