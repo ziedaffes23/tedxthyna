@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Menu, X } from "lucide-react";
 
 const asset = (name: string) => `https://raw.githubusercontent.com/ziedaffes23/tedxthyna/main/${name}?v=f8febb8`;
-const logo = asset("tedx-thyna-logo.png");
+const logo = "/tedx-thyna-wordmark.png";
 const navigation = [["MISSION", "/mission"], ["THE MINDS", "/minds"], ["THE SCENE", "/scene"], ["AGENDA", "/agenda"], ["CONTACT", "/contact"]];
 
 function ClassifiedIntro({ onFinish }: { onFinish: () => void }) {
@@ -27,6 +27,6 @@ export default function Home() {
       <section className="story-preview" id="story"><div className="story-intro"><span className="reference-kicker">02 / THE STORY</span><h2>THE STORY HAS<br />MORE THAN <em>ONE SIDE.</em></h2><p>Every great idea begins as a secret worth sharing. Follow the questions, the people, and the place behind TEDx Thyna.</p></div><div className="story-links"><a href="/minds"><span className="story-index">01</span><span><b>THE MINDS</b><small>Who is behind the story?</small></span><ArrowUpRight /></a><a href="/scene"><span className="story-index">02</span><span><b>THE SCENE</b><small>Where did it happen?</small></span><ArrowUpRight /></a><a href="/mission"><span className="story-index">03</span><span><b>THE EVIDENCE</b><small>What was left behind?</small></span><ArrowUpRight /></a></div></section>
       <section className="reference-final-cta"><span className="reference-kicker">03 / THE NEXT MOVE</span><h2>ARE YOU READY TO<br /><em>UNCOVER THE STORY?</em></h2><a className="outline-cta dark-cta" href="/register">DISCOVER TEDx THYNA <ArrowUpRight size={15} /></a></section>
     </main>
-    <footer className="reference-footer"><div><span className="reference-brand footer-brand"><img src={logo} alt="" /><span>TEDx <b>THYNA</b></span></span><p>CASE FILE / TX-026<br />STATUS / ACTIVE</p></div><div className="footer-social"><a href="/mission">Mission</a><a href="https://www.instagram.com/tedxthyna/" target="_blank" rel="noreferrer">Instagram</a><a href="/contact">Contact</a><span>© 2026 TEDx Thyna Youth</span></div></footer>
+    <footer className="reference-footer"><div><span className="reference-brand footer-brand"><img src={logo} alt="TEDx Thyna" /></span><p>CASE FILE / TX-026<br />STATUS / ACTIVE</p></div><div className="footer-social"><a href="/mission">Mission</a><a href="https://www.instagram.com/tedxthyna/" target="_blank" rel="noreferrer">Instagram</a><a href="/contact">Contact</a><span>© 2026 TEDx Thyna Youth</span></div></footer>
   </div>;
 }
