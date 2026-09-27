@@ -16,6 +16,19 @@ function ClassifiedIntro({ onFinish }: { onFinish: () => void }) {
   </section>;
 }
 
+function EventCountdown() {
+  const target = new Date("2026-11-15T00:00:00+01:00").getTime();
+  const [remaining, setRemaining] = useState(() => Math.max(0, target - Date.now()));
+  useEffect(() => { const timer = window.setInterval(() => setRemaining(Math.max(0, target - Date.now())), 1000); return () => window.clearInterval(timer); }, [target]);
+  const totalSeconds = Math.floor(remaining / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const unit = (value: number, label: string) => <span><b>{String(value).padStart(2, "0")}</b><small>{label}</small></span>;
+  return <div className="event-countdown" aria-label="Countdown to TEDx Thyna on 15 November 2026"><span className="countdown-label">EVENT COUNTDOWN / TX-026</span><div className="countdown-units">{unit(days, "DAYS")}{unit(hours, "HRS")}{unit(minutes, "MIN")}{unit(seconds, "SEC")}</div></div>;
+}
+
 export default function Home() {
   const [intro, setIntro] = useState(true); const [menu, setMenu] = useState(false);
   return <div className="reference-home-v2">
@@ -23,7 +36,7 @@ export default function Home() {
     <header className="reference-header"><a href="/" className="reference-brand"><img src={logo} alt="TEDx Thyna" /></a><nav className="reference-nav">{navigation.map(([label, href]) => <a href={href} key={href}>{label}</a>)}<a className="reference-register" href="/register">REGISTER <ArrowUpRight size={14} /></a></nav><button className="reference-menu" onClick={() => setMenu(!menu)} aria-label="Toggle navigation">{menu ? <X /> : <Menu />}</button></header>
     {menu && <div className="reference-mobile-menu">{navigation.map(([label, href]) => <a href={href} key={href} onClick={() => setMenu(false)}>{label}<ArrowUpRight size={14} /></a>)}<a href="/register">REGISTER <ArrowUpRight size={14} /></a></div>}
     <main>
-      <section className="reference-hero-v2"><div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" /><div className="hero-grid-mark-v2" /><div className="hero-side-label">01 / THE INVESTIGATION</div><div className="hero-main-copy"><p className="reference-kicker"><i /> CASE NO. TX-026</p><h1>THE<br />CASE<br />IS<br /><em>OPEN.</em></h1></div><div className="hero-support-copy"><p>Some stories are meant to be discovered.<br />Some questions are meant to be asked.</p><strong>TEDx Thyna 2026</strong><a className="outline-cta" href="#story">ENTER THE INVESTIGATION <ArrowUpRight size={15} /></a></div><div className="hero-stamp">CASE<br />ACTIVE</div><div className="hero-bottom-meta"><span>THÉÂTRE MUNICIPAL DE SFAX</span><span>15 NOVEMBER 2026</span><a href="#story">SCROLL TO DISCOVER <ArrowDownRight size={14} /></a></div></section>
+      <section className="reference-hero-v2"><div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" /><div className="hero-grid-mark-v2" /><div className="hero-side-label">01 / THE INVESTIGATION</div><div className="hero-main-copy"><p className="reference-kicker"><i /> CASE NO. TX-026</p><h1>THE<br />CASE<br />IS<br /><em>OPEN.</em></h1></div><div className="hero-support-copy"><p>Some stories are meant to be discovered.<br />Some questions are meant to be asked.</p><strong>TEDx Thyna 2026</strong><EventCountdown /><a className="outline-cta" href="#story">ENTER THE INVESTIGATION <ArrowUpRight size={15} /></a></div><div className="hero-stamp">CASE<br />ACTIVE</div><div className="hero-bottom-meta"><span>THÉÂTRE MUNICIPAL DE SFAX</span><span>15 NOVEMBER 2026</span><a href="#story">SCROLL TO DISCOVER <ArrowDownRight size={14} /></a></div></section>
       <section className="story-preview" id="story"><div className="story-intro"><span className="reference-kicker">02 / THE STORY</span><h2>THE STORY HAS<br />MORE THAN <em>ONE SIDE.</em></h2><p>Every great idea begins as a secret worth sharing. Follow the questions, the people, and the place behind TEDx Thyna.</p></div><div className="story-links"><a href="/minds"><span className="story-index">01</span><span><b>THE VOICES</b><small>Who is behind the story?</small></span><ArrowUpRight /></a><a href="/scene"><span className="story-index">02</span><span><b>THE SCENE</b><small>Where did it happen?</small></span><ArrowUpRight /></a><a href="/mission"><span className="story-index">03</span><span><b>THE EVIDENCE</b><small>What was left behind?</small></span><ArrowUpRight /></a></div></section>
       <section className="reference-final-cta"><span className="reference-kicker">03 / THE NEXT MOVE</span><h2>ARE YOU READY TO<br /><em>UNCOVER THE STORY?</em></h2><a className="outline-cta dark-cta" href="/register">DISCOVER TEDx THYNA <ArrowUpRight size={15} /></a></section>
     </main>
