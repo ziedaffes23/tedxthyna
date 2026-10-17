@@ -8,9 +8,9 @@ import { EASE, EASE_OUT } from "./motion";
 const MENU_IMAGES: Record<string, string> = {
   "/mission": "gather",
   "/speakers": "voices",
-  "/organization": "seats",
-  "/scene": "hall",
-  "/agenda": "plan",
+  "/organization": "board",
+  "/scene": "stage",
+  "/agenda": "desk",
   "/contact": "sfax",
 };
 

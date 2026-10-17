@@ -67,7 +67,7 @@ export const FILES = [
     title: "Where it unfolds",
     question: "Where will it happen?",
     href: "/scene",
-    image: "hall",
+    image: "stage",
   },
   {
     code: "04",
@@ -75,7 +75,7 @@ export const FILES = [
     title: "Who runs the operation",
     question: "Who built the file?",
     href: "/organization",
-    image: "seats",
+    image: "board",
   },
   {
     code: "05",
@@ -83,7 +83,7 @@ export const FILES = [
     title: "How the day plays out",
     question: "What happens, and when?",
     href: "/agenda",
-    image: "plan",
+    image: "desk",
   },
 ] as const;
 
@@ -117,8 +117,6 @@ export const speakerPhoto = (photo: string) => `/media/speakers/${photo}.webp`;
 export const PHOTO_CREDITS = [
   { what: "City walls of Sfax", who: "Hamed Gamaoun", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/w/index.php?curid=51962668" },
   { what: "Medina of Sfax", who: "IssamBarhoumi", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/w/index.php?curid=51853012" },
-  { what: "Teatro de Santa Isabel", who: "Wilfredo R. Rodríguez H.", license: "CC0", url: "https://commons.wikimedia.org/w/index.php?curid=94701086" },
-  { what: "Theater Show", who: "Kurt Kaiser", license: "CC0", url: "https://commons.wikimedia.org/w/index.php?curid=107668370" },
 ];
 
 export const img = (name: string, size: 1000 | 2000 = 2000) => `/media/${name}-${size}.webp`;
