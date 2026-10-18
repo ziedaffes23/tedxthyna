@@ -30,6 +30,35 @@
     el.innerHTML = `<svg viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0,60 L0,20 L${pts.join(" L")} L1000,18 L1000,60 Z"/></svg>`;
   });
 
+  /* ───────── hero speaker carousel (same rhythm as tedxthyna.com) ───────── */
+
+  const HERO_SPEAKERS = [
+    { first: "Hamza", last: "Belloumi", label: "Speaker", photo: "hamza-belloumi" },
+    { first: "Sawsen", last: "Haj Amor", label: "Speaker", photo: "sawsen-haj-amor" },
+    { first: "Mohamed", last: "Khammessi", label: "Speaker", photo: "mohamed-khammessi" },
+    { first: "Sawsen", last: "Maalej", label: "Speaker", photo: "sawsen-maalej" },
+  ];
+  const hcPhoto = $("#hcPhoto");
+  if (hcPhoto && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const hcRole = $("#hcRole");
+    const hcFirst = $("#hcFirst");
+    const hcLast = $("#hcLast");
+    let hcIndex = 0;
+    setInterval(() => {
+      hcIndex = (hcIndex + 1) % HERO_SPEAKERS.length;
+      const s = HERO_SPEAKERS[hcIndex];
+      hcPhoto.style.opacity = "0";
+      setTimeout(() => {
+        hcPhoto.src = `/assets/speakers/${s.photo}.webp`;
+        hcPhoto.alt = `${s.first} ${s.last}, ${s.label}`;
+        hcRole.textContent = `Meet Our ${s.label}`;
+        hcFirst.textContent = s.first;
+        hcLast.textContent = s.last;
+        hcPhoto.style.opacity = "1";
+      }, 350);
+    }, 4000);
+  }
+
   /* ───────── ticket rendering ───────── */
 
   // Positions are in the template's native pixels (1772 × 709).
