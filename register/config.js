@@ -2,8 +2,8 @@
  * TEDx Thyna Youth — registration settings.
  *
  * ENDPOINT: the Google Apps Script "Web app" URL that stores registrations
- * in your Google Sheet and issues ticket numbers. See apps-script/README.md.
- * It looks like: https://script.google.com/macros/s/AKfy.../exec
+ * in your Google Sheet, handles payments and issues ticket numbers.
+ * See apps-script/README.md. It looks like: https://script.google.com/macros/s/AKfy.../exec
  */
 window.TEDX_REGISTER = {
   ENDPOINT: "",
@@ -13,4 +13,23 @@ window.TEDX_REGISTER = {
   EVENT_END: "20261115T200000",
   EVENT_TZ: "Africa/Tunis",
   EVENT_LOCATION: "Complexe Culturel Mohamed Jamoussi, Rue Ibn Al Jazzar, Sfax 3079, Tunisia",
+
+  /**
+   * Payment. PRICE is what the page shows — the amount actually charged is
+   * PRICE_TND in apps-script/Code.gs, keep both equal.
+   * METHODS: remove any you don't want to offer. D17 is only shown when
+   * D17_NUMBER is filled, bank transfer only when BANK.RIB is filled.
+   */
+  PAYMENT: {
+    PRICE: 40,
+    CURRENCY: "TND",
+    METHODS: ["konnect", "flouci", "d17", "transfer"],
+    D17_NUMBER: "", // phone number linked to your D17 account, e.g. "+216 XX XXX XXX"
+    D17_NAME: "", // name shown in D17 for that account
+    BANK: {
+      HOLDER: "", // account holder, e.g. "Association …"
+      NAME: "", // bank name, e.g. "BIAT — Agence Sfax"
+      RIB: "", // 20-digit RIB
+    },
+  },
 };

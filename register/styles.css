@@ -190,6 +190,42 @@ legend .serif { font-size: clamp(34px, 5vw, 52px); font-weight: 600; }
 .link-btn.is-light { color: rgba(255, 255, 255, 0.6); margin-top: 22px; text-decoration: underline; text-underline-offset: 4px; }
 .link-btn.is-light:hover { color: #fff; }
 
+/* ───────── payment ───────── */
+.price { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: -6px 0 26px; padding: 16px 0; border-top: 1.5px solid var(--ink); border-bottom: 1px dashed var(--line); }
+.price > span { display: flex; flex-direction: column; gap: 2px; }
+.price b { font: 600 17px var(--f-body); }
+.price small { color: var(--ink-dim); font-size: 13px; }
+.price strong { font: 600 clamp(34px, 5vw, 44px)/1 var(--f-serif); color: var(--red-hot); white-space: nowrap; }
+.price strong small { font: 500 12px var(--f-mono); letter-spacing: 0.16em; color: var(--ink); }
+
+.methods { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-top: 4px; }
+.method { position: relative; cursor: pointer; }
+.method input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.method > span { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 14px 16px 14px; border: 1.5px solid var(--ink); transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s; }
+.method b { font: 600 15px var(--f-body); }
+.method small { font-size: 12.5px; line-height: 1.4; color: var(--ink-dim); transition: color 0.25s; }
+.method .tag { align-self: flex-start; margin-top: 6px; padding: 3px 8px; font: 500 9.5px var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; font-style: normal; background: var(--red); color: #fff; }
+.method .tag.is-slow { background: transparent; color: var(--ink-dim); border: 1px solid var(--line); }
+.method:hover > span { border-color: var(--red-hot); }
+.method input:checked + span { background: var(--ink); color: var(--paper); box-shadow: 4px 4px 0 var(--red); }
+.method input:checked + span small { color: rgba(236, 231, 226, 0.7); }
+.method input:checked + span .tag.is-slow { color: rgba(236, 231, 226, 0.75); border-color: rgba(236, 231, 226, 0.3); }
+.method input:focus-visible + span { outline: 2px solid var(--red-hot); outline-offset: 2px; }
+.field.is-bad .method > span { border-color: var(--red-hot); }
+
+.paybox { margin: 6px 0 0; padding: 18px 18px 4px; background: rgba(255, 255, 255, 0.38); border: 1.5px dashed var(--ink); animation: stepIn 0.5s var(--ease-out); }
+.paybox-lead { margin: 0 0 14px; font-size: 14.5px; }
+.paybox-list { margin: 0 0 18px; display: grid; gap: 10px; }
+.paybox-list div { display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: center; }
+.paybox-list dt { color: var(--ink-dim); font-size: 10px; }
+.paybox-list dd { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font: 500 15px var(--f-mono); letter-spacing: 0.04em; word-break: break-all; }
+.copy { padding: 4px 10px; border: 1px solid var(--ink); background: transparent; cursor: pointer; font-size: 9.5px; }
+.copy:hover { background: var(--ink); color: var(--paper); }
+.paybox-note { margin: -4px 0 16px; font-size: 12.5px; color: var(--ink-dim); }
+.note.is-tight { margin: 6px 0 0; font-size: 14px; }
+.waiting { display: flex; align-items: center; gap: 12px; margin: 0; color: var(--ink-dim); }
+.spinner.is-dark { display: inline-block; flex: none; border-color: rgba(11, 11, 11, 0.2); border-top-color: var(--red-hot); }
+
 .error { margin: 18px 0 0; padding: 12px 14px; border-left: 3px solid var(--red-hot); background: rgba(179, 18, 29, 0.08); color: var(--red-hot); font-size: 14px; }
 .fine { margin: 26px 0 0; padding-top: 16px; border-top: 1px dashed var(--line); text-align: center; color: var(--ink-dim); font-size: 10px; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
@@ -247,6 +283,8 @@ legend .serif { font-size: clamp(34px, 5vw, 52px); font-weight: 600; }
   .nav-back { height: 34px; padding: 0 12px; font-size: 12px; }
   .hero-collage { max-width: 240px; }
   .sheet { transform: none; }
+  .methods { grid-template-columns: 1fr; }
+  .paybox-list div { grid-template-columns: 1fr; gap: 2px; }
   .step-foot { flex-direction: column-reverse; align-items: stretch; }
   .step-foot .btn { width: 100%; }
   .step-foot .link-btn { text-align: center; }

@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#ece7e2" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Get your pass — TEDx Thyna Youth 2026" />
-    <meta property="og:description" content="Break The Pattern · 15 November 2026 · Complexe Culturel Mohamed Jamoussi, Sfax · 10:00 – 20:00" />
+    <meta property="og:description" content="Break The Pattern · 15 November 2026 · Complexe Culturel Mohamed Jamoussi, Sfax · 10:00 – 20:00 · General Pass 40 TND" />
     <meta property="og:image" content="/assets/og.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/png" href="/assets/favicon.png" />
@@ -46,7 +46,7 @@
           <ul class="facts">
             <li><span class="mono">Date</span><b>15 Nov 2026</b><small>10:00 – 20:00</small></li>
             <li><span class="mono">Venue</span><b>Complexe Culturel Mohamed Jamoussi</b><small>Rue Ibn Al Jazzar, Sfax</small></li>
-            <li><span class="mono">Pass</span><b>General Pass</b><small>Free · one per person</small></li>
+            <li><span class="mono">Pass</span><b>General Pass</b><small><span data-price>40</span> TND · one per person</small></li>
           </ul>
         </div>
         <div class="hero-collage" aria-hidden="true">
@@ -66,7 +66,8 @@
         <ol class="progress mono" id="progress" aria-label="Registration steps">
           <li class="is-on" data-step="1"><b>01</b><span>About you</span></li>
           <li data-step="2"><b>02</b><span>Your profile</span></li>
-          <li data-step="3"><b>03</b><span>Your pass</span></li>
+          <li data-step="3"><b>03</b><span>Payment</span></li>
+          <li data-step="4"><b>04</b><span>Your pass</span></li>
         </ol>
 
         <div class="sheet" id="sheet">
@@ -135,11 +136,86 @@
               </label>
               <div class="step-foot">
                 <button class="link-btn" type="button" data-back>← Back</button>
+                <button class="btn btn-red" type="button" data-next>Continue <span aria-hidden="true">→</span></button>
+              </div>
+            </fieldset>
+
+            <!-- step 3: payment -->
+            <fieldset class="step" data-step="3" hidden>
+              <legend>
+                <span class="script">Pay for</span>
+                <span class="serif">your <em>pass</em></span>
+              </legend>
+              <div class="price">
+                <span><b>General Pass</b><small>TEDx Thyna Youth 2026 · 15 Nov</small></span>
+                <strong><span data-price>40</span> <small>TND</small></strong>
+              </div>
+              <div class="field">
+                <span class="mono">Pay with *</span>
+                <div class="methods" role="radiogroup" aria-label="Payment method">
+                  <label class="method" data-method="konnect">
+                    <input type="radio" name="method" value="konnect" required />
+                    <span><b>Card · e-DINAR</b><small>Visa, Mastercard, e-DINAR or Konnect wallet — via Konnect</small><i class="tag">Instant</i></span>
+                  </label>
+                  <label class="method" data-method="flouci">
+                    <input type="radio" name="method" value="flouci" />
+                    <span><b>Flouci</b><small>Pay from the Flouci app or with a card</small><i class="tag">Instant</i></span>
+                  </label>
+                  <label class="method" data-method="d17">
+                    <input type="radio" name="method" value="d17" />
+                    <span><b>D17</b><small>Send the amount from the D17 app (La Poste)</small><i class="tag is-slow">Checked by hand</i></span>
+                  </label>
+                  <label class="method" data-method="transfer">
+                    <input type="radio" name="method" value="transfer" />
+                    <span><b>Bank transfer</b><small>Transfer to our bank account</small><i class="tag is-slow">Checked by hand</i></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="paybox" id="paybox" hidden>
+                <p class="paybox-lead" id="payLead"></p>
+                <dl class="paybox-list" id="payList"></dl>
+                <label class="field">
+                  <span class="mono" id="refLabel">Transaction reference *</span>
+                  <input name="reference" maxlength="60" autocomplete="off" placeholder="As shown on your receipt" />
+                </label>
+                <p class="paybox-note">Your pass is issued once our team confirms the payment — usually within 24 hours. You'll get it by email.</p>
+              </div>
+              <p class="note is-tight" id="onlineNote" hidden>You'll be sent to a secure payment page, then brought straight back here to your pass.</p>
+
+              <div class="step-foot">
+                <button class="link-btn" type="button" data-back>← Back</button>
                 <button class="btn btn-red" id="submitBtn" type="submit">
-                  <span class="label">Get my pass</span>
+                  <span class="label" id="submitLabel">Pay <span data-price>40</span> TND</span>
                   <span class="spinner" aria-hidden="true"></span>
                   <span aria-hidden="true">→</span>
                 </button>
+              </div>
+            </fieldset>
+
+            <!-- returning from checkout -->
+            <fieldset class="step" data-step="processing" hidden>
+              <legend>
+                <span class="script">One</span>
+                <span class="serif">moment<em>.</em></span>
+              </legend>
+              <p class="waiting" id="processingText"><span class="spinner is-dark" aria-hidden="true"></span> Confirming your payment…</p>
+              <div class="step-foot" id="processingFoot" hidden>
+                <button class="link-btn" type="button" data-go="lookup">Check again later: <u>Find my pass</u></button>
+                <button class="btn btn-red" type="button" id="retryConfirm">Check again <span aria-hidden="true">↻</span></button>
+              </div>
+            </fieldset>
+
+            <!-- manual payment declared -->
+            <fieldset class="step" data-step="awaiting" hidden>
+              <legend>
+                <span class="script">Thank you</span>
+                <span class="serif">almost <em>there</em></span>
+              </legend>
+              <p class="note is-tight" id="awaitingText">We've received your registration. Our team is checking your payment — once it's confirmed, your ticket number arrives by email (usually within 24 hours). You can also come back here and use “Find my pass”.</p>
+              <div class="step-foot">
+                <button class="link-btn" type="button" id="againPending">Register someone else</button>
+                <a class="btn btn-red" href="https://tedxthyna.com">Back to tedxthyna.com <span aria-hidden="true">↗</span></a>
               </div>
             </fieldset>
 

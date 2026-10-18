@@ -1,9 +1,16 @@
 /* TEDx Thyna Youth — registration app (vanilla JS, no build step).
-   Flow: 01 About you → 02 Your profile → 03 Your pass (ticket revealed only after a successful registration or lookup). */
+   Flow: 01 About you → 02 Your profile → 03 Payment → 04 Your pass.
+   Online payments (Konnect, Flouci) leave the page for checkout and come back with ?order=…;
+   manual payments (D17, bank transfer) end on an "awaiting confirmation" screen. */
 (function () {
   "use strict";
 
   const CFG = window.TEDX_REGISTER || {};
+  const PAY = CFG.PAYMENT || {};
+  const PRICE = PAY.PRICE || 40;
+  const CUR = PAY.CURRENCY || "TND";
+  const ONLINE = ["konnect", "flouci"];
+  const SAVED_FORM = "tedx-thyna-form";
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
@@ -110,7 +117,7 @@
       fs.disabled = !on;
       fs.classList.toggle("is-back", on && back);
     });
-    setProgress(step === "lookup" ? 1 : Number(step));
+    setProgress({ lookup: 1, processing: 3, awaiting: 3 }[step] || Number(step));
     $('[name="lookupEmail"]').required = step === "lookup";
     if (focus) {
       const first = $(`.step[data-step="${step}"] input:not([type=hidden]), .step[data-step="${step}"] select`);
@@ -120,8 +127,8 @@
     }
   }
 
-  $$("[data-next]").forEach((b) => b.addEventListener("click", () => validate("1") || go(2)));
-  $$("[data-back]").forEach((b) => b.addEventListener("click", () => go(1, { back: true })));
+  $$("[data-next]").forEach((b) => b.addEventListener("click", () => validate(step) || go(Number(step) + 1)));
+  $$("[data-back]").forEach((b) => b.addEventListener("click", () => go(Number(step) - 1, { back: true })));
   $$("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go, { back: b.dataset.go === "1" })));
 
   /* ───────── validation ───────── */
@@ -155,6 +162,10 @@
       if (!val("profile")) bad.push("profile");
       if (!val("source")) bad.push("source");
       if (!val("consent")) bad.push("consent");
+    } else if (which === "3") {
+      const m = val("method");
+      if (!m) bad.push("method");
+      else if (!ONLINE.includes(m) && val("reference").length < 4) bad.push("reference");
     } else if (which === "lookup") {
       if (!emailOk(val("lookupEmail"))) bad.push("lookupEmail");
     }
@@ -169,6 +180,8 @@
     const msg =
       bad.length === 1 && bad[0] === "consent" ? "Please accept the consent checkbox to continue."
       : bad.length === 1 && bad[0] === "profile" ? "Tell us who you are — pick one option."
+      : bad.length === 1 && bad[0] === "method" ? "Choose how you'd like to pay."
+      : bad.length === 1 && bad[0] === "reference" ? "Enter the reference of your transfer so we can find your payment."
       : "Please check the highlighted fields.";
     showError(msg);
     return true;
@@ -188,15 +201,22 @@
     "not-found": "We couldn't find a pass for that email. Check the spelling, or register.",
     full: "We're sorry — all seats have been claimed. Follow @tedxthyna for any released seats.",
     invalid: "Some details look incorrect. Please check the form.",
+    reference: "Enter the reference of your transfer so we can find your payment.",
+    unpaid: "Your payment wasn't completed, so no pass was issued. Choose a payment method to try again.",
+    rejected: "We couldn't match your payment. Check your email, then register again with the same address.",
+    "payment-init": "The payment page couldn't be opened. Please try again, or choose another payment method.",
+    "method-unavailable": "This payment method isn't available right now — please choose another one.",
   };
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (val("website")) return; // bot honeypot
-    if (step === "1") return validate("1") || go(2); // Enter on step 1 moves forward
+    if (step === "1" || step === "2") return validate(step) || go(Number(step) + 1); // Enter moves forward
+    if (step !== "3" && step !== "lookup") return;
     if (validate(step)) return;
 
     const btn = step === "lookup" ? $("#lookupBtn") : $("#submitBtn");
+    let leaving = false;
     btn.disabled = true;
     btn.classList.add("is-loading");
     try {
@@ -212,17 +232,27 @@
               organization: val("organization"),
               source: val("source"),
               consent: true,
+              method: val("method"),
+              reference: ONLINE.includes(val("method")) ? "" : val("reference"),
               userAgent: navigator.userAgent.slice(0, 180),
             };
       const out = await call(payload);
       if (!out || !out.ok) throw new Error((out && out.error) || "unknown");
-      await issue(out.ticket, out.name, out.existing || step === "lookup");
+      if (out.status === "redirect" && out.payUrl) {
+        saveForm();
+        leaving = true;
+        window.location.assign(out.payUrl);
+        return; // keep the button spinning while the checkout page loads
+      }
+      await handleResult(out, step === "lookup");
     } catch (err) {
       const key = String(err && err.message);
       showError(MESSAGES[key] || "Something went wrong. Please check your connection and try again.");
     } finally {
-      btn.disabled = false;
-      btn.classList.remove("is-loading");
+      if (!leaving) {
+        btn.disabled = false;
+        btn.classList.remove("is-loading");
+      }
     }
   });
 
@@ -232,7 +262,8 @@
     issued = { ticket, name };
     await draw(name, ticket);
     sheet.hidden = true;
-    setProgress(3);
+    setProgress(4);
+    clearSavedForm();
     $("#stampNo").textContent = ticket;
     $("#revealKicker").textContent = existing ? `Welcome back · ${ticket}` : `You're in · ${ticket}`;
     $("#revealText").textContent = existing
@@ -301,14 +332,155 @@
     $("#calendarBtn").href = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
   }
 
-  $("#againBtn").addEventListener("click", () => {
+  function startOver() {
     issued = null;
     form.reset();
+    updateMethod();
+    clearSavedForm();
     reveal.hidden = true;
     reveal.classList.remove("is-live");
     sheet.hidden = false;
     go(1);
+  }
+  $("#againBtn").addEventListener("click", startOver);
+  $("#againPending").addEventListener("click", startOver);
+
+  /* ───────── payment ───────── */
+
+  async function handleResult(out, existing) {
+    if (out.status === "awaiting") {
+      $("#awaitingText").textContent = existing
+        ? "We have your registration and our team is still checking your payment. Your ticket number arrives by email as soon as it's confirmed (usually within 24 hours)."
+        : "We've received your registration. Our team is checking your payment — once it's confirmed, your ticket number arrives by email (usually within 24 hours). You can also come back here and use “Find my pass”.";
+      clearSavedForm();
+      return go("awaiting");
+    }
+    if (out.status === "processing") return go("processing");
+    if (out.ticket) return issue(out.ticket, out.name, !!out.existing);
+    throw new Error("unknown");
+  }
+
+  $$("[data-price]").forEach((el) => (el.textContent = PRICE));
+
+  // Offer only the methods that are configured.
+  const offered = (PAY.METHODS || ONLINE).filter((m) =>
+    m === "d17" ? !!PAY.D17_NUMBER : m === "transfer" ? !!(PAY.BANK && PAY.BANK.RIB) : ONLINE.includes(m)
+  );
+  $$(".method").forEach((el) => (el.hidden = !offered.includes(el.dataset.method)));
+  if (offered.length === 1) $(`.method[data-method="${offered[0]}"] input`).checked = true;
+
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  function payRow(label, value, copy) {
+    if (!value) return "";
+    return `<div><dt class="mono">${esc(label)}</dt><dd><span>${esc(value)}</span>${
+      copy ? `<button type="button" class="copy mono" data-copy="${esc(value)}">Copy</button>` : ""
+    }</dd></div>`;
+  }
+
+  function updateMethod() {
+    const m = val("method");
+    const manual = !!m && !ONLINE.includes(m);
+    $("#paybox").hidden = !manual;
+    $("#onlineNote").hidden = !ONLINE.includes(m);
+    form.elements.reference.required = manual;
+    $("#submitLabel").innerHTML = manual ? "I've sent the payment" : `Pay <span data-price>${PRICE}</span> ${CUR}`;
+    if (m === "d17") {
+      $("#payLead").innerHTML = `Open the <b>D17</b> app and send <b>${PRICE} ${CUR}</b> to the number below. Put your full name in the note.`;
+      $("#payList").innerHTML = payRow("D17 number", PAY.D17_NUMBER, true) + payRow("Account name", PAY.D17_NAME) + payRow("Amount", `${PRICE} ${CUR}`);
+      $("#refLabel").textContent = "D17 transaction reference *";
+    } else if (m === "transfer") {
+      const b = PAY.BANK || {};
+      $("#payLead").innerHTML = `Transfer <b>${PRICE} ${CUR}</b> to the account below. Write your full name as the transfer reason.`;
+      $("#payList").innerHTML = payRow("Account holder", b.HOLDER) + payRow("Bank", b.NAME) + payRow("RIB", b.RIB, true) + payRow("Amount", `${PRICE} ${CUR}`);
+      $("#refLabel").textContent = "Transfer reference *";
+    }
+  }
+  $$('[name="method"]').forEach((r) => r.addEventListener("change", () => (hideError(), updateMethod())));
+
+  $("#payList").addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-copy]");
+    if (!btn) return;
+    try {
+      await navigator.clipboard.writeText(btn.dataset.copy.replace(/\s+/g, ""));
+      btn.textContent = "Copied";
+      setTimeout(() => (btn.textContent = "Copy"), 1600);
+    } catch (_) {
+      /* clipboard unavailable */
+    }
   });
 
-  go(1, { focus: false });
+  // Keep the form across the trip to the checkout page, so a failed payment can be retried.
+  const FORM_FIELDS = ["name", "email", "phone", "profile", "organization", "source", "consent"];
+  function saveForm() {
+    try {
+      sessionStorage.setItem(SAVED_FORM, JSON.stringify(Object.fromEntries(FORM_FIELDS.map((n) => [n, val(n)]))));
+    } catch (_) {
+      /* storage unavailable */
+    }
+  }
+  function restoreForm() {
+    try {
+      const data = JSON.parse(sessionStorage.getItem(SAVED_FORM) || "null");
+      if (!data) return false;
+      FORM_FIELDS.forEach((n) => {
+        const el = form.elements[n];
+        if (!el) return;
+        if (el instanceof RadioNodeList) {
+          const r = Array.from(el).find((x) => x.value === data[n]);
+          if (r) r.checked = true;
+        } else if (el.type === "checkbox") el.checked = !!data[n];
+        else el.value = data[n] || "";
+      });
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+  function clearSavedForm() {
+    try {
+      sessionStorage.removeItem(SAVED_FORM);
+    } catch (_) {
+      /* storage unavailable */
+    }
+  }
+
+  // Back from Konnect / Flouci: ?order=…&result=ok|failed
+  let returnOrder = null;
+  function backToPayment(error) {
+    restoreForm();
+    go(3, { focus: false });
+    showError(MESSAGES[error] || MESSAGES.unpaid);
+  }
+  async function confirmReturn(tries, failed) {
+    $("#processingFoot").hidden = true;
+    $("#processingText").innerHTML = '<span class="spinner is-dark" aria-hidden="true"></span> Confirming your payment…';
+    for (let i = 0; i < tries; i++) {
+      try {
+        const out = await call({ action: "confirm", order: returnOrder });
+        if (out && out.ok && out.status !== "processing") return await handleResult(out, false);
+        if (out && !out.ok) return backToPayment(out.error);
+        if (failed) return backToPayment("unpaid"); // checkout reported failure and nothing was paid
+      } catch (err) {
+        if (String(err && err.message) === "not-configured") break;
+      }
+      await new Promise((r) => setTimeout(r, 3000));
+    }
+    $("#processingText").textContent =
+      "Your bank hasn't confirmed the payment yet. If you paid, your pass will be emailed to you as soon as it's confirmed — or check again in a minute.";
+    $("#processingFoot").hidden = false;
+  }
+  $("#retryConfirm").addEventListener("click", () => confirmReturn(3, false));
+
+  const params = new URLSearchParams(location.search);
+  const orderParam = (params.get("order") || "").match(/^[A-Za-z0-9]+/);
+  if (orderParam) {
+    returnOrder = orderParam[0];
+    history.replaceState(null, "", location.pathname);
+    go("processing", { focus: false });
+    window.scrollTo({ top: $("#flow").getBoundingClientRect().top + window.scrollY - 70 });
+    confirmReturn(6, params.get("result") === "failed");
+  } else {
+    go(1, { focus: false });
+  }
+  updateMethod();
 })();
