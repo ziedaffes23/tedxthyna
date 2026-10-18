@@ -366,8 +366,18 @@
   const offered = (PAY.METHODS || ONLINE).filter((m) =>
     m === "d17" ? !!PAY.D17_NUMBER : m === "transfer" ? !!(PAY.BANK && PAY.BANK.RIB) : ONLINE.includes(m)
   );
-  $$(".method").forEach((el) => (el.hidden = !offered.includes(el.dataset.method)));
-  if (offered.length === 1) $(`.method[data-method="${offered[0]}"] input`).checked = true;
+  const soon = PAY.COMING_SOON || [];
+  $$(".method").forEach((el) => {
+    el.hidden = !offered.includes(el.dataset.method);
+    if (!soon.includes(el.dataset.method)) return;
+    el.classList.add("is-soon");
+    $("input", el).disabled = true;
+    const tag = $(".tag", el);
+    tag.textContent = "Coming soon";
+    tag.className = "tag is-slow";
+  });
+  const payable = offered.filter((m) => !soon.includes(m));
+  if (payable.length === 1) $(`.method[data-method="${payable[0]}"] input`).checked = true;
 
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   function payRow(label, value, copy) {
