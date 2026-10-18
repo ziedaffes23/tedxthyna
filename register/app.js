@@ -9,7 +9,7 @@
   const PAY = CFG.PAYMENT || {};
   const PRICE = PAY.PRICE || 40;
   const CUR = PAY.CURRENCY || "TND";
-  const ONLINE = ["konnect", "flouci"];
+  const ONLINE = ["konnect", "flouci", "clictopay"];
   const SAVED_FORM = "tedx-thyna-form";
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));

@@ -7,6 +7,7 @@
  * Payment methods
  *   konnect  — online: bank card, e-DINAR, Konnect wallet (verified via Konnect API)
  *   flouci   — online: Flouci wallet + bank card (verified via Flouci API)
+ *   clictopay — online: Tunisian & international bank cards via SMT ClicToPay
  *   d17      — manual: D17 transfer, attendee enters the transaction reference
  *   transfer — manual: bank transfer, attendee enters the transfer reference
  *
@@ -21,6 +22,7 @@ const SETTINGS = {
   PRICE_TND: 40,
   MAX_SEATS: 0, // 0 = unlimited. Counts paid passes + payments awaiting confirmation.
   KONNECT_SANDBOX: true, // true = Konnect test environment. Set false when going live.
+  CLICTOPAY_TEST: true, // true = test.clictopay.com. Set false when SMT activates your live account.
   PAYMENT_SESSION_MINUTES: 30,
   SEND_CONFIRMATION_EMAIL: true,
   REGISTER_URL: "https://register.tedxthyna.com",
@@ -29,11 +31,14 @@ const SETTINGS = {
 
 // Secrets live in Project Settings → Script properties, never in code:
 //   KONNECT_API_KEY, KONNECT_WALLET_ID, FLOUCI_PUBLIC_KEY, FLOUCI_PRIVATE_KEY
+//   CLICTOPAY_USERNAME, CLICTOPAY_PASSWORD  (API user from SMT, not your dashboard login)
+//   CLICTOPAY_LIVE_URL (optional — live REST base if SMT gives you a different one)
 //   WEBAPP_URL (optional — the /exec URL, if ScriptApp can't infer it)
 
 const METHODS = {
   konnect: { label: "Konnect (card / e-DINAR)", online: true },
   flouci: { label: "Flouci", online: true },
+  clictopay: { label: "ClicToPay (card)", online: true },
   d17: { label: "D17", online: false },
   transfer: { label: "Bank transfer", online: false },
 };
@@ -149,7 +154,10 @@ function register_(body) {
   // Online: open a checkout session with the provider, then send the attendee there.
   let session;
   try {
-    session = method === "konnect" ? konnectCreate_(order, name, email) : flouciCreate_(order);
+    session =
+      method === "konnect" ? konnectCreate_(order, name, email)
+      : method === "flouci" ? flouciCreate_(order)
+      : clictopayCreate_(order, email);
   } catch (err) {
     console.error("Payment init failed (" + method + "): " + err);
     return { ok: false, error: "payment-init" };
@@ -194,7 +202,11 @@ function lookup_(body) {
 /** Verifies an online payment with its provider; issues the ticket when paid. */
 function settleOnline_(row) {
   const method = methodKey_(row.method);
-  const state = method === "konnect" ? konnectStatus_(row.ref) : method === "flouci" ? flouciStatus_(row.ref) : "failed";
+  const state =
+    method === "konnect" ? konnectStatus_(row.ref)
+    : method === "flouci" ? flouciStatus_(row.ref)
+    : method === "clictopay" ? clictopayStatus_(row.ref)
+    : "failed";
   if (state !== "paid") return { state: state };
   return { state: "paid", ticket: issueTicket_(row.order) };
 }
@@ -306,6 +318,48 @@ function flouciStatus_(ref) {
   const r = res.result || {};
   if (res.success && r.status === "SUCCESS" && Number(r.amount) >= SETTINGS.PRICE_TND * 1000) return "paid";
   return r.status === "PENDING" ? "pending" : "failed";
+}
+
+/* ───────── ClicToPay (SMT) ───────── */
+
+function clictopayBase_() {
+  if (SETTINGS.CLICTOPAY_TEST) return "https://test.clictopay.com/payment/rest/";
+  return PropertiesService.getScriptProperties().getProperty("CLICTOPAY_LIVE_URL") || "https://ipay.clictopay.com/payment/rest/";
+}
+
+function clictopayAuth_() {
+  const props = PropertiesService.getScriptProperties();
+  return { userName: props.getProperty("CLICTOPAY_USERNAME"), password: props.getProperty("CLICTOPAY_PASSWORD") };
+}
+
+function clictopayCreate_(order, email) {
+  // ClicToPay refuses a reused orderNumber, so each checkout attempt gets its own suffix.
+  const attempt = order + "-" + Date.now().toString(36).toUpperCase();
+  const res = fetchJson_(clictopayBase_() + "register.do", {
+    method: "post",
+    payload: Object.assign(clictopayAuth_(), {
+      orderNumber: attempt,
+      amount: String(SETTINGS.PRICE_TND * 1000), // millimes
+      currency: "788", // TND
+      returnUrl: returnUrl_(order, "ok"),
+      failUrl: returnUrl_(order, "failed"),
+      description: "TEDx Thyna Youth 2026 - General Pass",
+      language: "fr",
+      jsonParams: JSON.stringify({ email: email }),
+    }),
+  });
+  if (!res.orderId || !res.formUrl) throw new Error("ClicToPay: " + JSON.stringify(res).slice(0, 300));
+  return { url: res.formUrl, ref: res.orderId };
+}
+
+function clictopayStatus_(ref) {
+  const res = fetchJson_(clictopayBase_() + "getOrderStatusExtended.do", {
+    method: "post",
+    payload: Object.assign(clictopayAuth_(), { orderId: ref, language: "en" }),
+  });
+  const status = Number(res.orderStatus);
+  if (status === 2 && Number(res.amount) >= SETTINGS.PRICE_TND * 1000) return "paid"; // 2 = deposited / paid
+  return status === 0 || status === 1 || isNaN(status) ? "pending" : "failed"; // 3 reversed, 4 refunded, 6 declined
 }
 
 /* ───────── organiser menu (manual payments) ───────── */
@@ -430,6 +484,7 @@ function methodEnabled_(method) {
   const props = PropertiesService.getScriptProperties();
   if (method === "konnect") return !!(props.getProperty("KONNECT_API_KEY") && props.getProperty("KONNECT_WALLET_ID"));
   if (method === "flouci") return !!(props.getProperty("FLOUCI_PUBLIC_KEY") && props.getProperty("FLOUCI_PRIVATE_KEY"));
+  if (method === "clictopay") return !!(props.getProperty("CLICTOPAY_USERNAME") && props.getProperty("CLICTOPAY_PASSWORD"));
   return true;
 }
 

@@ -23,7 +23,7 @@ window.TEDX_REGISTER = {
   PAYMENT: {
     PRICE: 40,
     CURRENCY: "TND",
-    METHODS: ["konnect", "flouci", "d17", "transfer"],
+    METHODS: ["konnect", "flouci", "clictopay", "d17", "transfer"],
     D17_NUMBER: "+216 93 072 842", // phone number linked to your D17 account, e.g. "+216 XX XXX XXX"
     D17_NAME: "", // name shown in D17 for that account
     BANK: {
