@@ -24,12 +24,12 @@ window.TEDX_REGISTER = {
     PRICE: 40,
     CURRENCY: "TND",
     METHODS: ["konnect", "flouci", "d17", "transfer"],
-    D17_NUMBER: "", // phone number linked to your D17 account, e.g. "+216 XX XXX XXX"
+    D17_NUMBER: "+216 93 072 842", // phone number linked to your D17 account, e.g. "+216 XX XXX XXX"
     D17_NAME: "", // name shown in D17 for that account
     BANK: {
       HOLDER: "", // account holder, e.g. "Association …"
-      NAME: "", // bank name, e.g. "BIAT — Agence Sfax"
-      RIB: "", // 20-digit RIB
+      NAME: "UIB", // bank name, e.g. "BIAT — Agence Sfax"
+      RIB: "12 068 0000093007970 28", // 20-digit RIB
     },
   },
 };
