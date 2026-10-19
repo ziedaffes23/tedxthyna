@@ -188,6 +188,7 @@ function confirm_(body) {
   if (!row) return { ok: false, error: "not-found" };
   if (row.status === STATUS.PAID) return passOf_(row, false);
   if (row.status === STATUS.AWAITING) return { ok: true, status: "awaiting", name: row.name };
+  if (row.status === STATUS.REJECTED) return { ok: false, error: "rejected" };
   if (row.status !== STATUS.UNPAID || !row.ref) return { ok: false, error: "unpaid" };
   const result = settleOnline_(row);
   if (result.ticket) return { ok: true, status: "paid", ticket: result.ticket, name: row.name, existing: false };
@@ -243,7 +244,7 @@ function issueTicket_(order) {
   } finally {
     lock.releaseLock();
   }
-  if (SETTINGS.SEND_CONFIRMATION_EMAIL) safeMail_(() => sendConfirmation_(row.email, row.name, ticket));
+  if (SETTINGS.SEND_CONFIRMATION_EMAIL) safeMail_(() => sendConfirmation_(row.email, row.name, ticket, row.order));
   return ticket;
 }
 
@@ -390,9 +391,16 @@ function onStatusEdit(e) {
     if (index < 2) continue;
     const row = rowAt_(sh, index);
     if (!row.order) continue;
+    const single = e.range.getNumRows() === 1; // oldValue is only known for single-cell edits
     if (row.status === STATUS.PAID && !row.ticket) {
-      issueTicket_(row.order); // adds ticket number + paid date, emails the attendee
-    } else if (row.status === STATUS.REJECTED && e.oldValue === STATUS.AWAITING && e.range.getNumRows() === 1) {
+      issueTicket_(row.order); // adds ticket number + paid date, emails the pass
+    } else if (row.status === STATUS.PAID && single && e.oldValue === STATUS.REJECTED) {
+      // Reinstated after a cancellation: same ticket number, pass emailed again.
+      if (SETTINGS.SEND_CONFIRMATION_EMAIL) safeMail_(() => sendConfirmation_(row.email, row.name, row.ticket, row.order));
+    } else if (row.status === STATUS.REJECTED && single && e.oldValue === STATUS.PAID && row.ticket) {
+      // Was confirmed, now cancelled: the pass stops working on the site (lookup/confirm return "rejected").
+      if (SETTINGS.SEND_CONFIRMATION_EMAIL) safeMail_(() => sendCancelled_(row.email, row.name, row.ticket));
+    } else if (row.status === STATUS.REJECTED && single && e.oldValue === STATUS.AWAITING) {
       if (SETTINGS.SEND_CONFIRMATION_EMAIL) safeMail_(() => sendRejected_(row.email, row.name));
     }
   }
@@ -585,8 +593,9 @@ function methodEnabled_(method) {
 }
 
 function newOrder_() {
-  const rand = Math.floor(Math.random() * 46656).toString(36).padStart(3, "0");
-  return ("T" + Date.now().toString(36) + rand).toUpperCase();
+  // Random, unguessable: the order code is also the key of the "open my pass" link.
+  const raw = typeof Utilities !== "undefined" ? Utilities.getUuid() : String(Math.random()) + Math.random() + Date.now();
+  return ("T" + raw.replace(/[^0-9a-z]/gi, "").slice(0, 15)).toUpperCase();
 }
 
 function webAppUrl_() {
@@ -775,7 +784,12 @@ const EVENT_FACTS = [
   ["Venue", "Complexe Culturel Mohamed Jamoussi", "Rue Ibn Al Jazzar, Sfax"],
 ];
 
-function sendConfirmation_(email, name, ticket) {
+/** Link that opens this attendee's pass (same design as on the site) ready to download. */
+function passUrl_(order) {
+  return order ? SETTINGS.REGISTER_URL + "/?order=" + encodeURIComponent(order) + "&view=pass" : SETTINGS.REGISTER_URL;
+}
+
+function sendConfirmation_(email, name, ticket, order) {
   sendMail_(email, "Your TEDx Thyna Youth pass · " + ticket, {
     preheader: "Payment received — your General Pass " + ticket + " is confirmed. See you on 15 November.",
     small: "You're in,",
@@ -783,8 +797,8 @@ function sendConfirmation_(email, name, ticket) {
     body:
       mailP_("We've received your payment of <b>" + SETTINGS.PRICE_TND + " TND</b>. Your General Pass for <b>TEDx Thyna Youth 2026 — Break The Pattern</b> is confirmed.") +
       mailTicket_(name, ticket) +
-      mailButton_("Download my pass", SETTINGS.REGISTER_URL) +
-      mailP_('<span style="color:' + MAIL.dim + ';font-size:13.5px">On the page, choose <b>Already registered? Find my pass</b> and enter this email. Show the pass at the entrance — on your phone or printed.</span>') +
+      mailButton_("Open &amp; download my pass", passUrl_(order)) +
+      mailP_('<span style="color:' + MAIL.dim + ';font-size:13.5px">The button opens your official General Pass — tap <b>Download ticket</b> to save it. Show it at the entrance, on your phone or printed. You can also find it any time on the site with <b>Already registered? Find my pass</b>.</span>') +
       mailFacts_(EVENT_FACTS),
   });
 }
@@ -820,6 +834,18 @@ function sendPickup_(email, name) {
       ) +
       mailP_("Once you've paid, your <b>ticket number</b> is emailed to you straight away.") +
       mailFacts_(EVENT_FACTS),
+  });
+}
+
+function sendCancelled_(email, name, ticket) {
+  sendMail_(email, "Your TEDx Thyna Youth pass " + ticket + " has been cancelled", {
+    preheader: "We couldn't confirm your payment, so pass " + ticket + " is no longer valid.",
+    small: "Hi " + escape_(String(name).split(" ")[0]) + ",",
+    big: "Pass <span style=\"color:" + MAIL.red + '">cancelled</span>',
+    body:
+      mailP_("After checking our accounts we couldn't confirm your payment, so your General Pass <b>" + escape_(ticket) + "</b> has been cancelled and is no longer valid at the entrance.") +
+      mailP_("If you did pay, simply reply to this email with a screenshot of your payment and we'll restore your pass with the same ticket number.") +
+      mailButton_("Register again", SETTINGS.REGISTER_URL),
   });
 }
 

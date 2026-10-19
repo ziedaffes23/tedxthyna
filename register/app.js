@@ -275,7 +275,7 @@
     invalid: "Some details look incorrect. Please check the form.",
     reference: "Enter the reference of your transfer so we can find your payment.",
     unpaid: "Your payment wasn't completed, so no pass was issued. Choose a payment method to try again.",
-    rejected: "We couldn't match your payment. Check your email, then register again with the same address.",
+    rejected: "This pass isn't valid: we couldn't confirm the payment. Check your email, or register again with the same address.",
     "payment-init": "The payment page couldn't be opened. Please try again, or choose another payment method.",
     "backend-outdated": "Registration is being updated — please try again in a few minutes.",
     "method-unavailable": "This payment method isn't available right now — please choose another one.",
@@ -570,7 +570,31 @@
 
   const params = new URLSearchParams(location.search);
   const orderParam = (params.get("order") || "").match(/^[A-Za-z0-9]+/);
-  if (orderParam) {
+
+  // "Open my pass" link from the confirmation email: ?order=…&view=pass
+  async function openPass() {
+    go("processing", { focus: false });
+    $("#processingFoot").hidden = true;
+    $("#processingText").innerHTML = '<span class="spinner is-dark" aria-hidden="true"></span> Opening your pass…';
+    try {
+      const out = await call({ action: "confirm", order: returnOrder });
+      if (out && out.ok && out.ticket) return await issue(out.ticket, out.name, true);
+      if (out && out.ok && out.status === "awaiting") return await handleResult(out, true);
+      go("lookup", { focus: false });
+      const e = (out && out.error) || "";
+      showError(e === "rejected" ? MESSAGES.rejected : "We couldn't open this pass link. Enter the email you registered with to find your pass.");
+    } catch (err) {
+      go("lookup", { focus: false });
+      showError(MESSAGES[String(err && err.message)] || "We couldn't open your pass right now. Enter your email to find it, or try again in a minute.");
+    }
+  }
+
+  if (orderParam && params.get("view") === "pass") {
+    returnOrder = orderParam[0];
+    history.replaceState(null, "", location.pathname);
+    window.scrollTo({ top: $("#flow").getBoundingClientRect().top + window.scrollY - 70 });
+    openPass();
+  } else if (orderParam) {
     returnOrder = orderParam[0];
     history.replaceState(null, "", location.pathname);
     go("processing", { focus: false });

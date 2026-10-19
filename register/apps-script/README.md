@@ -81,6 +81,11 @@ The **Method** column says how they're paying; for D17 / transfer, **Payment ref
    On a computer you can also select several rows → **TEDx → Confirm selected payments**.
 3. **Money not found?** Set **Status** to **Rejected** (turns red). The attendee is emailed and can register again
    with the same email.
+4. **Confirmed by mistake?** Change a **Paid** row to **Rejected**: the attendee gets a "pass cancelled" email and the
+   pass stops opening on the site. Set it back to **Paid** and the **same ticket number** is restored and emailed again.
+
+The confirmation email has an **Open & download my pass** button that opens the attendee's official pass (same design
+as on the site) ready to download.
 
 The dropdown, colours and automatic emails switch on by themselves after the first registration. If the dropdown is
 missing, open the sheet on a computer → **TEDx → Set up Status dropdown (run once)**.
