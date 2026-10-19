@@ -10,6 +10,7 @@
   const PRICE = PAY.PRICE || 40;
   const CUR = PAY.CURRENCY || "TND";
   const ONLINE = ["konnect", "flouci", "clictopay"];
+  const NEEDS_REF = ["d17", "transfer"];
   const SAVED_FORM = "tedx-thyna-form";
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -236,7 +237,7 @@
     } else if (which === "3") {
       const m = val("method");
       if (!m) bad.push("method");
-      else if (!ONLINE.includes(m) && val("reference").length < 4) bad.push("reference");
+      else if (NEEDS_REF.includes(m) && val("reference").length < 4) bad.push("reference");
     } else if (which === "lookup") {
       if (!emailOk(val("lookupEmail"))) bad.push("lookupEmail");
     }
@@ -305,7 +306,7 @@
               source: val("source"),
               consent: true,
               method: val("method"),
-              reference: ONLINE.includes(val("method")) ? "" : val("reference"),
+              reference: NEEDS_REF.includes(val("method")) ? val("reference") : "",
               userAgent: navigator.userAgent.slice(0, 180),
             };
       const out = await call(payload);
@@ -424,7 +425,9 @@
 
   async function handleResult(out, existing) {
     if (out.status === "awaiting") {
-      $("#awaitingText").textContent = existing
+      $("#awaitingText").textContent = !existing && val("method") === "cash"
+        ? `You're registered. ${PAY.PICKUP || "Our team will contact you by phone to arrange where and when to pay and collect your ticket."} Bring ${PRICE} ${CUR} — once you've paid, your ticket number arrives by email.`
+        : existing
         ? "We have your registration and our team is still checking your payment. Your ticket number arrives by email as soon as it's confirmed (usually within 24 hours)."
         : "We've received your registration. Our team is checking your payment — once it's confirmed, your ticket number arrives by email (usually within 24 hours). You can also come back here and use “Find my pass”.";
       clearSavedForm();
@@ -439,7 +442,7 @@
 
   // Offer only the methods that are configured.
   const offered = (PAY.METHODS || ONLINE).filter((m) =>
-    m === "d17" ? !!PAY.D17_NUMBER : m === "transfer" ? !!(PAY.BANK && PAY.BANK.RIB) : ONLINE.includes(m)
+    m === "d17" ? !!PAY.D17_NUMBER : m === "transfer" ? !!(PAY.BANK && PAY.BANK.RIB) : m === "cash" || ONLINE.includes(m)
   );
   const soon = PAY.COMING_SOON || [];
   $$(".method").forEach((el) => {
@@ -467,8 +470,14 @@
     const manual = !!m && !ONLINE.includes(m);
     $("#paybox").hidden = !manual;
     $("#onlineNote").hidden = !ONLINE.includes(m);
-    form.elements.reference.required = manual;
-    $("#submitLabel").innerHTML = manual ? "I've sent the payment" : `Pay <span data-price>${PRICE}</span> ${CUR}`;
+    const needsRef = NEEDS_REF.includes(m);
+    form.elements.reference.required = needsRef;
+    $("#refField").hidden = !needsRef;
+    $("#payNote").textContent = needsRef
+      ? "Your pass is issued once our team confirms the payment — usually within 24 hours. You'll get it by email."
+      : "Your seat is held for you. Your ticket number is emailed to you as soon as you've paid.";
+    $("#submitLabel").innerHTML =
+      m === "cash" ? "Register — pay in person" : manual ? "I've sent the payment" : `Pay <span data-price>${PRICE}</span> ${CUR}`;
     if (m === "d17") {
       $("#payLead").innerHTML = `Open the <b>D17</b> app and send <b>${PRICE} ${CUR}</b> to the number below. Put your full name in the note.`;
       $("#payList").innerHTML = payRow("D17 number", PAY.D17_NUMBER, true) + payRow("Account name", PAY.D17_NAME) + payRow("Amount", `${PRICE} ${CUR}`);
@@ -478,6 +487,9 @@
       $("#payLead").innerHTML = `Transfer <b>${PRICE} ${CUR}</b> to the account below. Write your full name as the transfer reason.`;
       $("#payList").innerHTML = payRow("Account holder", b.HOLDER) + payRow("Bank", b.NAME) + payRow("RIB", b.RIB, true) + payRow("Amount", `${PRICE} ${CUR}`);
       $("#refLabel").textContent = "Transfer reference *";
+    } else if (m === "cash") {
+      $("#payLead").innerHTML = `Pay <b>${PRICE} ${CUR}</b> in cash when you collect your ticket. ${esc(PAY.PICKUP || "Our team will contact you by phone to arrange where and when.")}`;
+      $("#payList").innerHTML = payRow("Amount", `${PRICE} ${CUR}`);
     }
   }
   $$('[name="method"]').forEach((r) => r.addEventListener("change", () => (hideError(), updateMethod())));

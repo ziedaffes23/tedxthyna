@@ -8,6 +8,7 @@ Registrations and payments are saved in a Google Sheet. The script:
   - **ClicToPay** — Tunisian & international bank cards via SMT (confirmed automatically)
   - **D17** — attendee sends money in the D17 app and enters the reference (confirmed by you)
   - **Bank transfer** — attendee transfers to your RIB and enters the reference (confirmed by you)
+  - **Pay in person** — attendee pays cash when collecting the ticket (confirmed by you)
 - issues ticket numbers (`TY2026 - 0001`, …) **only once the pass is paid**,
 - blocks duplicates by email (paying twice is impossible; an unpaid attempt is reused),
 - emails the attendee at each step.
@@ -49,16 +50,28 @@ The first registration creates the **Registrations** tab. Reload the sheet once 
 - **Flouci:** use the keys of the **TEST APP** in your developer account (test card `4509 2111 1111 1119`, 12/26, CVV 748).
   When ready, replace them with your live app's keys. No code change.
 
-## Daily work: confirming D17 / bank transfers
+## Daily work: confirming payments (D17 · bank transfer · pay in person)
 
-Rows paid by D17 or transfer arrive with **Status = Awaiting confirmation** and the attendee's reference in **Payment ref**.
+Every new registration arrives as a row with **Status = Awaiting confirmation** (highlighted yellow).
+The **Method** column says how they're paying; for D17 / transfer, **Payment ref** holds the reference they typed.
 
-1. Check the reference against your D17 history / bank statement.
-2. Select the row(s) → **TEDx → Confirm selected payments** → ticket numbers are issued and emailed.
-3. Can't find the money? **TEDx → Reject selected payments** → the attendee is emailed and can register again.
+1. **Check the money arrived**
+   - **D17:** open the D17 app → history. Find a 40 TND payment matching the **Payment ref** (or the name / phone).
+   - **Bank transfer:** check your UIB account (app or statement) for 40 TND with that reference or the attendee's name.
+     Transfers between banks can take 1–2 working days.
+   - **Pay in person:** call the attendee (Phone column), meet, collect 40 TND cash.
+2. **Confirm:** change that row's **Status** to **Paid** (dropdown). The ticket number is filled in, the row turns green
+   and the attendee gets their pass by email within a few seconds. Works in the Google Sheets phone app too.
+   On a computer you can also select several rows → **TEDx → Confirm selected payments**.
+3. **Money not found?** Set **Status** to **Rejected** (turns red). The attendee is emailed and can register again
+   with the same email.
 
-Statuses: `Unpaid` (online checkout started, not paid) · `Awaiting confirmation` · `Paid` · `Rejected`.
-Only `Paid` rows have a ticket. `MAX_SEATS` counts Paid + Awaiting.
+The dropdown, colours and automatic emails switch on by themselves after the first registration. If the dropdown is
+missing, open the sheet on a computer → **TEDx → Set up Status dropdown (run once)**.
+
+Statuses: `Awaiting confirmation` · `Paid` · `Rejected` (`Unpaid` is only used by online card payments).
+Only `Paid` rows have a ticket. Never type a ticket number by hand — set Status to Paid and let the script number it.
+`MAX_SEATS` counts Paid + Awaiting.
 
 ## How online payment is confirmed
 

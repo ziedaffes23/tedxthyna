@@ -2,7 +2,7 @@
 
 Standalone registration site for TEDx Thyna Youth 2026. Plain HTML/CSS/JS — no build step.
 
-- General Pass at 40 TND — pay by card/e-DINAR (Konnect), Flouci, ClicToPay, D17 or bank transfer
+- General Pass at 40 TND — pay by D17, bank transfer or in person (card payments ready in the code for later)
 - Ticket drawn on the official General Pass design, issued once the payment is confirmed
 - Sequential ticket numbers + duplicate protection (Google Sheets backend)
 - Download the pass as PNG, share it, add the event to a calendar

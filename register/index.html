@@ -194,17 +194,21 @@
                     <input type="radio" name="method" value="transfer" />
                     <span><b>Bank transfer</b><small>Transfer to our bank account</small><i class="tag is-slow">Checked by hand</i></span>
                   </label>
+                  <label class="method" data-method="cash">
+                    <input type="radio" name="method" value="cash" />
+                    <span><b>Pay in person</b><small>Pay cash when you collect your ticket from our team</small><i class="tag is-slow">Pay at pickup</i></span>
+                  </label>
                 </div>
               </div>
 
               <div class="paybox" id="paybox" hidden>
                 <p class="paybox-lead" id="payLead"></p>
                 <dl class="paybox-list" id="payList"></dl>
-                <label class="field">
+                <label class="field" id="refField">
                   <span class="mono" id="refLabel">Transaction reference *</span>
                   <input name="reference" maxlength="60" autocomplete="off" placeholder="As shown on your receipt" />
                 </label>
-                <p class="paybox-note">Your pass is issued once our team confirms the payment — usually within 24 hours. You'll get it by email.</p>
+                <p class="paybox-note" id="payNote">Your pass is issued once our team confirms the payment — usually within 24 hours. You'll get it by email.</p>
               </div>
               <p class="note is-tight" id="onlineNote" hidden>You'll be sent to a secure payment page, then brought straight back here to your pass.</p>
 

@@ -10,10 +10,13 @@
  *   clictopay — online: Tunisian & international bank cards via SMT ClicToPay
  *   d17      — manual: D17 transfer, attendee enters the transaction reference
  *   transfer — manual: bank transfer, attendee enters the transfer reference
+ *   cash     — manual: attendee pays in person when collecting the ticket
  *
  * Online payments are confirmed automatically (return from checkout + webhook).
- * Manual payments are confirmed by an organiser from the sheet menu
- * "TEDx → Confirm selected payments". Setup: see README.md.
+ * Manual payments are confirmed by an organiser: set the row's Status to "Paid"
+ * (dropdown, works in the Sheets phone app too) or use the sheet menu
+ * "TEDx → Confirm selected payments". The ticket is then issued and emailed.
+ * Setup: see README.md.
  */
 
 const SETTINGS = {
@@ -27,6 +30,8 @@ const SETTINGS = {
   SEND_CONFIRMATION_EMAIL: true,
   REGISTER_URL: "https://register.tedxthyna.com",
   REPLY_TO: "affes.zied@tedxthyna.com",
+  // Shown in the email to people who choose "Pay in person". Say where and when they can pay and collect.
+  PICKUP_INFO: "Our team will contact you by phone to arrange where and when to pay and collect your ticket.",
 };
 
 // Secrets live in Project Settings → Script properties, never in code:
@@ -41,6 +46,7 @@ const METHODS = {
   clictopay: { label: "ClicToPay (card)", online: true },
   d17: { label: "D17", online: false },
   transfer: { label: "Bank transfer", online: false },
+  cash: { label: "Pay in person", online: false, noReference: true },
 };
 
 const STATUS = {
@@ -82,6 +88,7 @@ function doPost(e) {
     return json_({ ok: false, error: "invalid" });
   }
   try {
+    ensureSetup_();
     if (body.action === "register") return json_(register_(body));
     if (body.action === "lookup") return json_(lookup_(body));
     if (body.action === "confirm") return json_(confirm_(body));
@@ -103,7 +110,7 @@ function register_(body) {
   if (!email || name.length < 3 || phone.replace(/\D/g, "").length < 8 || !body.consent) return { ok: false, error: "invalid" };
   if (!METHODS[method]) return { ok: false, error: "invalid" };
   if (!methodEnabled_(method)) return { ok: false, error: "method-unavailable" };
-  if (!METHODS[method].online && reference.length < 4) return { ok: false, error: "reference" };
+  if (!METHODS[method].online && !METHODS[method].noReference && reference.length < 4) return { ok: false, error: "reference" };
 
   const sheet = sheet_();
   const fields = {
@@ -130,7 +137,7 @@ function register_(body) {
     if (!existing && SETTINGS.MAX_SEATS && seatsTaken_(sheet) >= SETTINGS.MAX_SEATS) return { ok: false, error: "full" };
 
     fields.Status = METHODS[method].online ? STATUS.UNPAID : STATUS.AWAITING;
-    fields["Payment ref"] = METHODS[method].online ? "" : reference;
+    fields["Payment ref"] = METHODS[method].online || METHODS[method].noReference ? "" : reference;
     if (existing) {
       // Unpaid / rejected earlier: reuse the same row and order so nothing is duplicated.
       order = existing.order;
@@ -147,7 +154,8 @@ function register_(body) {
   }
 
   if (!METHODS[method].online) {
-    if (SETTINGS.SEND_CONFIRMATION_EMAIL) safeMail_(() => sendReceived_(email, name, METHODS[method].label, reference));
+    if (SETTINGS.SEND_CONFIRMATION_EMAIL)
+      safeMail_(() => (method === "cash" ? sendPickup_(email, name) : sendReceived_(email, name, METHODS[method].label, reference)));
     return { ok: true, status: "awaiting", name: name };
   }
 
@@ -362,6 +370,60 @@ function clictopayStatus_(ref) {
   return status === 0 || status === 1 || isNaN(status) ? "pending" : "failed"; // 3 reversed, 4 refunded, 6 declined
 }
 
+/* ───────── organiser: confirm by changing Status ───────── */
+
+/**
+ * Installable "on edit" trigger (created automatically by ensureSetup_).
+ * Setting Status to "Paid" issues + emails the ticket; "Rejected" emails the attendee.
+ */
+function onStatusEdit(e) {
+  if (!e || !e.range) return;
+  const sh = e.range.getSheet();
+  if (sh.getName() !== SETTINGS.SHEET_NAME || e.range.getColumn() !== COL.Status || e.range.getNumColumns() !== 1) return;
+  for (let i = 0; i < e.range.getNumRows(); i++) {
+    const index = e.range.getRow() + i;
+    if (index < 2) continue;
+    const row = rowAt_(sh, index);
+    if (!row.order) continue;
+    if (row.status === STATUS.PAID && !row.ticket) {
+      issueTicket_(row.order); // adds ticket number + paid date, emails the attendee
+    } else if (row.status === STATUS.REJECTED && e.oldValue === STATUS.AWAITING && e.range.getNumRows() === 1) {
+      if (SETTINGS.SEND_CONFIRMATION_EMAIL) safeMail_(() => sendRejected_(row.email, row.name));
+    }
+  }
+}
+
+/** One-time setup: status dropdown, row colours, and the on-edit trigger. Safe to call often. */
+function ensureSetup_() {
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty("SETUP_V2") === "done") return;
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sh = sheet_();
+    const statusRange = sh.getRange(2, COL.Status, sh.getMaxRows() - 1, 1);
+    statusRange.setDataValidation(
+      SpreadsheetApp.newDataValidation().requireValueInList([STATUS.AWAITING, STATUS.PAID, STATUS.REJECTED, STATUS.UNPAID], true).setAllowInvalid(true).build()
+    );
+    const whole = sh.getRange(2, 1, sh.getMaxRows() - 1, HEADERS.length);
+    const col = String.fromCharCode(64 + COL.Status);
+    const rule = (status, colour) =>
+      SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied('=$' + col + '2="' + status + '"').setBackground(colour).setRanges([whole]).build();
+    sh.setConditionalFormatRules([rule(STATUS.AWAITING, "#fff1c2"), rule(STATUS.PAID, "#dff3dc"), rule(STATUS.REJECTED, "#f6d6d6")]);
+    const has = ScriptApp.getProjectTriggers().some((t) => t.getHandlerFunction() === "onStatusEdit");
+    if (!has) ScriptApp.newTrigger("onStatusEdit").forSpreadsheet(ss).onEdit().create();
+    props.setProperty("SETUP_V2", "done");
+  } catch (err) {
+    console.warn("Setup skipped: " + err);
+  }
+}
+
+/** Menu item / manual run from the editor: runs the setup again. */
+function setupSheet() {
+  PropertiesService.getScriptProperties().deleteProperty("SETUP_V2");
+  ensureSetup_();
+  SpreadsheetApp.getUi().alert("Done. Change a row's Status to “Paid” to issue and email its ticket.");
+}
+
 /* ───────── organiser menu (manual payments) ───────── */
 
 function onOpen() {
@@ -369,6 +431,8 @@ function onOpen() {
     .createMenu("TEDx")
     .addItem("Confirm selected payments (D17 / transfer)", "confirmSelected")
     .addItem("Reject selected payments", "rejectSelected")
+    .addSeparator()
+    .addItem("Set up Status dropdown (run once)", "setupSheet")
     .addToUi();
 }
 
@@ -487,8 +551,11 @@ function statuses_(sheet) {
   const last = sheet.getLastRow();
   return last < 2 ? [] : sheet.getRange(2, COL.Status, last - 1, 1).getValues().map((r) => r[0]);
 }
+/** Tickets already issued (Paid rows that have a ticket number). */
 function paidCount_(sheet) {
-  return statuses_(sheet).filter((s) => s === STATUS.PAID).length;
+  const last = sheet.getLastRow();
+  if (last < 2) return 0;
+  return sheet.getRange(2, COL.Ticket, last - 1, 1).getValues().filter((r) => String(r[0]).trim() !== "").length;
 }
 function seatsTaken_(sheet) {
   return statuses_(sheet).filter((s) => s === STATUS.PAID || s === STATUS.AWAITING).length;
@@ -598,6 +665,17 @@ function sendReceived_(email, name, method, reference) {
       "<p>Thanks for registering for <b>TEDx Thyna Youth 2026 — Break The Pattern</b>.</p>" +
       "<p>We've noted your " + escape_(method) + " payment of <b>" + SETTINGS.PRICE_TND + " TND</b> (reference <b>" + escape_(reference) + "</b>). " +
       "Our team checks payments by hand — once it's confirmed you'll receive your ticket number by email, usually within 24 hours.</p>"
+  );
+}
+
+function sendPickup_(email, name) {
+  sendMail_(
+    email,
+    "We received your TEDx Thyna Youth registration",
+    "<p>Hi " + escape_(name) + ",</p>" +
+      "<p>Thanks for registering for <b>TEDx Thyna Youth 2026 — Break The Pattern</b>. You chose to <b>pay in person</b>.</p>" +
+      "<p>" + escape_(SETTINGS.PICKUP_INFO) + "</p>" +
+      "<p>Please bring <b>" + SETTINGS.PRICE_TND + " TND</b>. As soon as your payment is received, your ticket number is emailed to you.</p>"
   );
 }
 
