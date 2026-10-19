@@ -430,6 +430,42 @@ function ensureSetup_() {
   }
 }
 
+/**
+ * Menu item: start numbering again, so the next ticket is TY2026 - 0001.
+ * Refuses while rows still hold a ticket number, so no number can ever be issued twice.
+ */
+function resetTicketNumbers() {
+  const ui = SpreadsheetApp.getUi();
+  const sh = sheet_();
+  const last = sh.getLastRow();
+  const holders = [];
+  if (last >= 2) {
+    sh.getRange(2, 1, last - 1, HEADERS.length).getValues().forEach((r, i) => {
+      const ticket = String(r[COL.Ticket - 1]).trim();
+      if (ticket) holders.push("Row " + (i + 2) + ": " + ticket + " — " + r[COL["Full name"] - 1]);
+    });
+  }
+  if (holders.length) {
+    ui.alert(
+      "Can't reset yet",
+      holders.length + " row(s) still have a ticket number:\n\n" + holders.slice(0, 15).join("\n") + (holders.length > 15 ? "\n…" : "") +
+        "\n\nDelete these rows first (for example your test registrations), then run the reset again.",
+      ui.ButtonSet.OK
+    );
+    return;
+  }
+  const answer = ui.alert("Reset ticket numbers?", "The next confirmed payment will get ticket " + SETTINGS.TICKET_PREFIX + " - 0001.", ui.ButtonSet.YES_NO);
+  if (answer !== ui.Button.YES) return;
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    PropertiesService.getScriptProperties().deleteProperty("LAST_TICKET");
+  } finally {
+    lock.releaseLock();
+  }
+  ui.alert("Done. The next ticket will be " + SETTINGS.TICKET_PREFIX + " - 0001.");
+}
+
 /** Menu item / manual run from the editor: runs the setup again. */
 function setupSheet() {
   PropertiesService.getScriptProperties().deleteProperty("SETUP_V2");
@@ -446,6 +482,7 @@ function onOpen() {
     .addItem("Reject selected payments", "rejectSelected")
     .addSeparator()
     .addItem("Set up Status dropdown (run once)", "setupSheet")
+    .addItem("Reset ticket numbers to 0000", "resetTicketNumbers")
     .addToUi();
 }
 

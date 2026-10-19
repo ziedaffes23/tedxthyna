@@ -94,6 +94,14 @@ Statuses: `Awaiting confirmation` · `Paid` · `Rejected` (`Unpaid` is only used
 Only `Paid` rows have a ticket. Never type a ticket number by hand — set Status to Paid and let the script number it.
 `MAX_SEATS` counts Paid + Awaiting.
 
+## Starting the ticket numbers again (after testing)
+
+1. Delete your test rows from the **Registrations** tab (right-click the row number → *Delete row*).
+2. On a computer: **TEDx → Reset ticket numbers to 0000** → *Yes*.
+
+The next confirmed payment gets **TY2026 - 0001**. The reset refuses to run while any row still has a ticket number,
+so a number can never be given to two people.
+
 ## How online payment is confirmed
 
 The page sends the attendee to the Konnect/Flouci checkout, which returns them to
