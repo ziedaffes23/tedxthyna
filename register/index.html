@@ -208,6 +208,14 @@
                   <span class="mono" id="refLabel">Transaction reference *</span>
                   <input name="reference" maxlength="60" autocomplete="off" placeholder="As shown on your receipt" />
                 </label>
+                <div class="field upload" id="receiptField" hidden>
+                  <span class="mono">Transfer receipt *</span>
+                  <label class="upload-box" id="receiptBox">
+                    <input type="file" name="receipt" id="receiptInput" accept="image/*,application/pdf" />
+                    <span class="upload-icon" aria-hidden="true">↑</span>
+                    <span class="upload-text"><b id="receiptName">Upload your receipt</b><small id="receiptHint">Photo, screenshot or PDF of the transfer · max 8 MB</small></span>
+                  </label>
+                </div>
                 <p class="paybox-note" id="payNote">Your pass is issued once our team confirms the payment — usually within 24 hours. You'll get it by email.</p>
               </div>
               <p class="note is-tight" id="onlineNote" hidden>You'll be sent to a secure payment page, then brought straight back here to your pass.</p>

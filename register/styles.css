@@ -240,6 +240,19 @@ legend .serif { font-size: clamp(34px, 5vw, 52px); font-weight: 600; }
 .paybox-list dd { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font: 500 15px var(--f-mono); letter-spacing: 0.04em; word-break: break-all; }
 .copy { padding: 4px 10px; border: 1px solid var(--ink); background: transparent; cursor: pointer; font-size: 9.5px; }
 .copy:hover { background: var(--ink); color: var(--paper); }
+.upload-box { position: relative; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1.5px dashed var(--ink); background: rgba(255, 255, 255, 0.5); cursor: pointer; transition: border-color 0.25s, background 0.25s; }
+.upload-box:hover { border-color: var(--red-hot); }
+.upload-box input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.upload-icon { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: var(--paper); font: 600 18px var(--f-body); }
+.upload-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.upload-text b { font: 600 14.5px var(--f-body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.upload-text small { font-size: 12px; color: var(--ink-dim); }
+.upload-box.is-ready { border-style: solid; background: rgba(255, 255, 255, 0.75); }
+.upload-box.is-ready .upload-icon { background: var(--red); }
+.upload-box.is-ready .upload-icon::before { content: "✓"; }
+.upload-box.is-ready .upload-icon { font-size: 0; }
+.upload-box.is-ready .upload-icon::before { font-size: 18px; }
+.field.is-bad .upload-box { border-color: var(--red-hot); }
 .paybox-note { margin: -4px 0 16px; font-size: 12.5px; color: var(--ink-dim); }
 .note.is-tight { margin: 6px 0 0; font-size: 14px; }
 .waiting { display: flex; align-items: center; gap: 12px; margin: 0; color: var(--ink-dim); }

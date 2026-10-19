@@ -50,7 +50,7 @@ const METHODS = {
   flouci: { label: "Flouci", online: true },
   clictopay: { label: "ClicToPay (card)", online: true },
   d17: { label: "D17", online: false },
-  transfer: { label: "Bank transfer", online: false },
+  transfer: { label: "Bank transfer", online: false, receipt: true, optionalReference: true },
   cash: { label: "Pay in person", online: false, noReference: true },
 };
 
@@ -63,7 +63,7 @@ const STATUS = {
 
 const HEADERS = [
   "Timestamp", "Order", "Status", "Ticket", "Full name", "Email", "Phone", "Profile", "School / company", "Source",
-  "Method", "Amount (TND)", "Payment ref", "Paid at", "Consent", "Checked in", "User agent",
+  "Method", "Amount (TND)", "Payment ref", "Paid at", "Consent", "Checked in", "User agent", "Receipt",
 ];
 const COL = HEADERS.reduce((o, h, i) => ((o[h] = i + 1), o), {}); // 1-based column numbers
 
@@ -115,7 +115,19 @@ function register_(body) {
   if (!email || name.length < 3 || phone.replace(/\D/g, "").length < 8 || !body.consent) return { ok: false, error: "invalid" };
   if (!METHODS[method]) return { ok: false, error: "invalid" };
   if (!methodEnabled_(method)) return { ok: false, error: "method-unavailable" };
-  if (!METHODS[method].online && !METHODS[method].noReference && reference.length < 4) return { ok: false, error: "reference" };
+  const m = METHODS[method];
+  if (!m.online && !m.noReference && !m.optionalReference && reference.length < 4) return { ok: false, error: "reference" };
+  let receiptUrl = "";
+  if (m.receipt) {
+    const blob = receiptBlob_(body.receipt, email);
+    if (!blob) return { ok: false, error: "receipt" };
+    try {
+      receiptUrl = receiptsFolder_().createFile(blob).getUrl();
+    } catch (err) {
+      console.error("Receipt upload failed: " + err);
+      return { ok: false, error: "receipt-upload" };
+    }
+  }
 
   const sheet = sheet_();
   const fields = {
@@ -127,6 +139,7 @@ function register_(body) {
     Source: clean_(body.source, 40),
     Method: METHODS[method].label,
     "Amount (TND)": SETTINGS.PRICE_TND,
+    Receipt: receiptUrl,
     Consent: "Yes",
     "User agent": clean_(body.userAgent, 180),
   };
@@ -160,7 +173,7 @@ function register_(body) {
 
   if (!METHODS[method].online) {
     if (SETTINGS.SEND_CONFIRMATION_EMAIL)
-      safeMail_(() => (method === "cash" ? sendPickup_(email, name) : sendReceived_(email, name, METHODS[method].label, reference)));
+      safeMail_(() => (method === "cash" ? sendPickup_(email, name) : sendReceived_(email, name, METHODS[method].label, reference, !!receiptUrl)));
     return { ok: true, status: "awaiting", name: name };
   }
 
@@ -409,7 +422,7 @@ function onStatusEdit(e) {
 /** One-time setup: status dropdown, row colours, and the on-edit trigger. Safe to call often. */
 function ensureSetup_() {
   const props = PropertiesService.getScriptProperties();
-  if (props.getProperty("SETUP_V2") === "done") return;
+  if (props.getProperty("SETUP_V3") === "done") return;
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sh = sheet_();
@@ -424,7 +437,7 @@ function ensureSetup_() {
     sh.setConditionalFormatRules([rule(STATUS.AWAITING, "#fff1c2"), rule(STATUS.PAID, "#dff3dc"), rule(STATUS.REJECTED, "#f6d6d6")]);
     const has = ScriptApp.getProjectTriggers().some((t) => t.getHandlerFunction() === "onStatusEdit");
     if (!has) ScriptApp.newTrigger("onStatusEdit").forSpreadsheet(ss).onEdit().create();
-    props.setProperty("SETUP_V2", "done");
+    props.setProperty("SETUP_V3", "done");
   } catch (err) {
     console.warn("Setup skipped: " + err);
   }
@@ -468,7 +481,7 @@ function resetTicketNumbers() {
 
 /** Menu item / manual run from the editor: runs the setup again. */
 function setupSheet() {
-  PropertiesService.getScriptProperties().deleteProperty("SETUP_V2");
+  PropertiesService.getScriptProperties().deleteProperty("SETUP_V3");
   ensureSetup_();
   SpreadsheetApp.getUi().alert("Done. Change a row's Status to “Paid” to issue and email its ticket.");
 }
@@ -524,6 +537,41 @@ function selectedRows_() {
   return out;
 }
 
+/* ───────── receipts (bank transfer) ───────── */
+
+const RECEIPT_TYPES = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/heic": "heic", "image/heif": "heif", "application/pdf": "pdf" };
+const RECEIPT_MAX_BYTES = 8 * 1024 * 1024;
+
+/** Builds the uploaded receipt file, or null when it is missing / not an image or PDF / too large. */
+function receiptBlob_(r, email) {
+  if (!r || !r.data || !RECEIPT_TYPES[r.type]) return null;
+  let bytes;
+  try {
+    bytes = Utilities.base64Decode(String(r.data).replace(/^data:[^,]*,/, ""));
+  } catch (err) {
+    return null;
+  }
+  if (!bytes.length || bytes.length > RECEIPT_MAX_BYTES) return null;
+  const stamp = Utilities.formatDate(new Date(), "Africa/Tunis", "yyyy-MM-dd HHmm");
+  return Utilities.newBlob(bytes, r.type, stamp + " — " + email + "." + RECEIPT_TYPES[r.type]);
+}
+
+/** Private Drive folder (owner of the script) holding all receipts. */
+function receiptsFolder_() {
+  const props = PropertiesService.getScriptProperties();
+  const id = props.getProperty("RECEIPTS_FOLDER");
+  if (id) {
+    try {
+      return DriveApp.getFolderById(id);
+    } catch (err) {
+      /* folder deleted: make a new one */
+    }
+  }
+  const folder = DriveApp.createFolder("TEDx Thyna Youth 2026 — Receipts");
+  props.setProperty("RECEIPTS_FOLDER", folder.getId());
+  return folder;
+}
+
 /* ───────── sheet helpers ───────── */
 
 function sheet_() {
@@ -534,7 +582,14 @@ function sheet_() {
     // under another name and start a fresh tab with the payment columns.
     const width = Math.max(sh.getLastColumn(), HEADERS.length);
     const header = sh.getRange(1, 1, 1, width).getValues()[0].map(String);
-    const matches = HEADERS.every((h, i) => header[i] === h);
+    let matches = HEADERS.every((h, i) => header[i] === h);
+    const filled = header.filter((h) => h !== "").length;
+    if (!matches && filled > 0 && filled < HEADERS.length && header.slice(0, filled).every((h, i) => h === HEADERS[i])) {
+      // Same payment columns, only newer ones missing at the end (e.g. "Receipt"): add them, keep every row.
+      sh.getRange(1, filled + 1, 1, HEADERS.length - filled).setValues([HEADERS.slice(filled)])
+        .setFontWeight("bold").setBackground("#e62b1e").setFontColor("#ffffff");
+      matches = true;
+    }
     if (!matches) {
       const lock = LockService.getScriptLock();
       lock.waitLock(20000);
@@ -573,6 +628,7 @@ function toRow_(values, index) {
     email: String(v("Email")).trim().toLowerCase(),
     method: String(v("Method")),
     ref: String(v("Payment ref")),
+    receipt: String(v("Receipt") || ""),
   };
 }
 
@@ -840,7 +896,7 @@ function sendConfirmation_(email, name, ticket, order) {
   });
 }
 
-function sendReceived_(email, name, method, reference) {
+function sendReceived_(email, name, method, reference, hasReceipt) {
   sendMail_(email, "We received your TEDx Thyna Youth registration", {
     preheader: "Thanks " + String(name).split(" ")[0] + " — we're checking your " + method + " payment. Your ticket follows by email.",
     small: "Almost there,",
@@ -850,7 +906,8 @@ function sendReceived_(email, name, method, reference) {
       mailBox_(
         mailKicker_("Your payment", MAIL.red) +
         '<div style="margin:8px 0 0">' + escape_(method) + " &middot; <b>" + SETTINGS.PRICE_TND + " TND</b></div>" +
-        '<div style="margin:2px 0 0;color:' + MAIL.dim + '">Reference: <span style="font-family:' + MAIL.mono + ";color:" + MAIL.ink + '">' + escape_(reference) + "</span></div>"
+        (reference ? '<div style="margin:2px 0 0;color:' + MAIL.dim + '">Reference: <span style="font-family:' + MAIL.mono + ";color:" + MAIL.ink + '">' + escape_(reference) + "</span></div>" : "") +
+        (hasReceipt ? '<div style="margin:2px 0 0;color:' + MAIL.dim + '">Receipt: <span style="color:' + MAIL.ink + '">received &#10003;</span></div>' : "")
       ) +
       mailP_("As soon as it's confirmed — usually within 24 hours — you'll get a second email with your <b>ticket number</b>.") +
       mailFacts_(EVENT_FACTS),

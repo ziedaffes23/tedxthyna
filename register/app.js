@@ -10,7 +10,8 @@
   const PRICE = PAY.PRICE || 40;
   const CUR = PAY.CURRENCY || "TND";
   const ONLINE = ["konnect", "flouci", "clictopay"];
-  const NEEDS_REF = ["d17", "transfer"];
+  const NEEDS_REF = ["d17"]; // reference required
+  const NEEDS_RECEIPT = ["transfer"]; // receipt upload required (reference optional)
   const SAVED_FORM = "tedx-thyna-form";
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -238,6 +239,7 @@
       const m = val("method");
       if (!m) bad.push("method");
       else if (NEEDS_REF.includes(m) && val("reference").length < 4) bad.push("reference");
+      else if (NEEDS_RECEIPT.includes(m) && !receipt) bad.push("receipt");
     } else if (which === "lookup") {
       if (!emailOk(val("lookupEmail"))) bad.push("lookupEmail");
     }
@@ -254,6 +256,7 @@
       : bad.length === 1 && bad[0] === "profile" ? "Tell us who you are — pick one option."
       : bad.length === 1 && bad[0] === "method" ? "Choose how you'd like to pay."
       : bad.length === 1 && bad[0] === "reference" ? "Enter the reference of your transfer so we can find your payment."
+      : bad.length === 1 && bad[0] === "receipt" ? "Upload the receipt of your bank transfer (photo, screenshot or PDF)."
       : "Please check the highlighted fields.";
     showError(msg);
     return true;
@@ -277,6 +280,8 @@
     unpaid: "Your payment wasn't completed, so no pass was issued. Choose a payment method to try again.",
     rejected: "This pass isn't valid: we couldn't confirm the payment. Check your email, or register again with the same address.",
     "payment-init": "The payment page couldn't be opened. Please try again, or choose another payment method.",
+    receipt: "Upload the receipt of your bank transfer (photo, screenshot or PDF, max 8 MB).",
+    "receipt-upload": "Your receipt couldn't be saved. Please try again, or use a smaller photo.",
     "backend-outdated": "Registration is being updated — please try again in a few minutes.",
     "method-unavailable": "This payment method isn't available right now — please choose another one.",
   };
@@ -306,7 +311,8 @@
               source: val("source"),
               consent: true,
               method: val("method"),
-              reference: NEEDS_REF.includes(val("method")) ? val("reference") : "",
+              reference: NEEDS_REF.includes(val("method")) || NEEDS_RECEIPT.includes(val("method")) ? val("reference") : "",
+              receipt: NEEDS_RECEIPT.includes(val("method")) ? receipt : null,
               userAgent: navigator.userAgent.slice(0, 180),
             };
       const out = await call(payload);
@@ -411,6 +417,9 @@
   function startOver() {
     issued = null;
     form.reset();
+    receipt = null;
+    $("#receiptBox").classList.remove("is-ready");
+    $("#receiptName").textContent = "Upload your receipt";
     updateMethod();
     clearSavedForm();
     reveal.hidden = true;
@@ -465,15 +474,67 @@
     }</dd></div>`;
   }
 
+  /* ───────── receipt upload (bank transfer) ───────── */
+
+  let receipt = null; // { name, type, data(base64) }
+  const RECEIPT_MAX = 8 * 1024 * 1024;
+  const readAsDataUrl = (blob) =>
+    new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = rej;
+      r.readAsDataURL(blob);
+    });
+
+  // Photos are resized to max 1600 px JPEG so uploads stay small on mobile data.
+  async function shrinkImage(file) {
+    try {
+      const bmp = await createImageBitmap(file);
+      const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(bmp.width * scale);
+      c.height = Math.round(bmp.height * scale);
+      c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+      const blob = await new Promise((res) => c.toBlob(res, "image/jpeg", 0.82));
+      return blob && blob.size < file.size ? { blob, type: "image/jpeg" } : { blob: file, type: file.type };
+    } catch (_) {
+      return { blob: file, type: file.type }; // e.g. HEIC the browser can't decode: send as is
+    }
+  }
+
+  $("#receiptInput").addEventListener("change", async (e) => {
+    const file = e.target.files && e.target.files[0];
+    receipt = null;
+    $("#receiptBox").classList.remove("is-ready");
+    $("#receiptName").textContent = "Upload your receipt";
+    if (!file) return;
+    hideError();
+    const isPdf = file.type === "application/pdf";
+    if (!isPdf && !/^image\//.test(file.type)) return showError(MESSAGES.receipt);
+    $("#receiptName").textContent = "Preparing…";
+    const { blob, type } = isPdf ? { blob: file, type: file.type } : await shrinkImage(file);
+    if (blob.size > RECEIPT_MAX) {
+      $("#receiptName").textContent = "Upload your receipt";
+      e.target.value = "";
+      return showError(MESSAGES.receipt);
+    }
+    const dataUrl = await readAsDataUrl(blob);
+    receipt = { name: file.name.slice(0, 80), type: type || "image/jpeg", data: String(dataUrl).split(",")[1] };
+    $("#receiptName").textContent = file.name;
+    $("#receiptBox").classList.add("is-ready");
+  });
+
   function updateMethod() {
     const m = val("method");
     const manual = !!m && !ONLINE.includes(m);
     $("#paybox").hidden = !manual;
     $("#onlineNote").hidden = !ONLINE.includes(m);
     const needsRef = NEEDS_REF.includes(m);
+    const needsReceipt = NEEDS_RECEIPT.includes(m);
     form.elements.reference.required = needsRef;
-    $("#refField").hidden = !needsRef;
-    $("#payNote").textContent = needsRef
+    $("#refField").hidden = !needsRef && !needsReceipt;
+    $("#receiptField").hidden = !needsReceipt;
+    $("#payNote").textContent = needsRef || needsReceipt
       ? "Your pass is issued once our team confirms the payment — usually within 24 hours. You'll get it by email."
       : "Your seat is held for you. Your ticket number is emailed to you as soon as you've paid.";
     $("#submitLabel").innerHTML =
@@ -484,9 +545,9 @@
       $("#refLabel").textContent = "D17 transaction reference *";
     } else if (m === "transfer") {
       const b = PAY.BANK || {};
-      $("#payLead").innerHTML = `Transfer <b>${PRICE} ${CUR}</b> to the account below. Write your full name as the transfer reason.`;
+      $("#payLead").innerHTML = `Transfer <b>${PRICE} ${CUR}</b> to the account below. Write your full name as the transfer reason, then <b>upload the receipt</b>.`;
       $("#payList").innerHTML = payRow("Account holder", b.HOLDER) + payRow("Bank", b.NAME) + payRow("RIB", b.RIB, true) + payRow("Amount", `${PRICE} ${CUR}`);
-      $("#refLabel").textContent = "Transfer reference *";
+      $("#refLabel").textContent = "Transfer reference (optional)";
     } else if (m === "cash") {
       $("#payLead").innerHTML = `Pay <b>${PRICE} ${CUR}</b> in cash when you collect your ticket. ${esc(PAY.PICKUP || "Our team will contact you by phone to arrange where and when.")}`;
       $("#payList").innerHTML = payRow("Amount", `${PRICE} ${CUR}`);

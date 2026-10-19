@@ -73,7 +73,9 @@ The **Method** column says how they're paying; for D17 / transfer, **Payment ref
 
 1. **Check the money arrived**
    - **D17:** open the D17 app → history. Find a 40 TND payment matching the **Payment ref** (or the name / phone).
-   - **Bank transfer:** check your UIB account (app or statement) for 40 TND with that reference or the attendee's name.
+   - **Bank transfer:** the attendee uploads their transfer receipt — click the link in the **Receipt** column to see it
+     (files are in the Drive folder *TEDx Thyna Youth 2026 — Receipts* of the account that runs the script; share that
+     folder with other organisers who confirm payments). Then check your UIB account for 40 TND with that name.
      Transfers between banks can take 1–2 working days.
    - **Pay in person:** call the attendee (Phone column), meet, collect 40 TND cash.
 2. **Confirm:** change that row's **Status** to **Paid** (dropdown). The ticket number is filled in, the row turns green
