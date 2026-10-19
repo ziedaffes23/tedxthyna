@@ -6,7 +6,7 @@
  * See apps-script/README.md. It looks like: https://script.google.com/macros/s/AKfy.../exec
  */
 window.TEDX_REGISTER = {
-  ENDPOINT: "https://script.google.com/macros/s/AKfycbxUgW8K-pUcKt53S84r5UIb9_1PL8dVRZWSVJiVydprmOPSDwrzsKfkLBmmiOcUwr2u/exec",
+  ENDPOINT: "https://script.google.com/macros/s/AKfycbz-uY27rWvNnbe9pMLI6VssCuFmZuhZNZ84KD_I08Mz5hOitug_c9zUCbOXk_dO4m0P/exec",
   TICKET_PREFIX: "TY2026",
   EVENT_TITLE: "TEDx Thyna Youth 2026 — Break The Pattern",
   EVENT_START: "20261115T100000",
