@@ -2,7 +2,8 @@
 
 Standalone registration site for TEDx Thyna Youth 2026. Plain HTML/CSS/JS — no build step.
 
-- Live ticket preview drawn on the official General Pass design
+- General Pass at 40 TND — pay by card/e-DINAR (Konnect), Flouci, ClicToPay, D17 or bank transfer
+- Ticket drawn on the official General Pass design, issued once the payment is confirmed
 - Sequential ticket numbers + duplicate protection (Google Sheets backend)
 - Download the pass as PNG, share it, add the event to a calendar
 - "I already registered" mode to recover a pass by email
@@ -16,7 +17,8 @@ Standalone registration site for TEDx Thyna Youth 2026. Plain HTML/CSS/JS — no
 
 ## Connect the backend
 
-Follow [`apps-script/README.md`](./apps-script/README.md), then set `ENDPOINT` in [`config.js`](./config.js).
+Follow [`apps-script/README.md`](./apps-script/README.md), then set `ENDPOINT` and the
+D17 / bank details under `PAYMENT` in [`config.js`](./config.js).
 Until `ENDPOINT` is set, the form shows "Registration is being set up".
 
 ## Local preview

@@ -23,7 +23,7 @@ const FAQ = [
   },
   {
     q: "How do I get a ticket?",
-    a: "Register on register.tedxthyna.com. You get your General Pass with a personal ticket number instantly — download it and show it at the entrance.",
+    a: "Register on register.tedxthyna.com. The General Pass costs 40 TND — pay by card (Konnect or ClicToPay), e-DINAR, Flouci, D17 or bank transfer. Once your payment is confirmed you get your pass with a personal ticket number — download it and show it at the entrance.",
   },
   {
     q: "I registered but lost my ticket.",
