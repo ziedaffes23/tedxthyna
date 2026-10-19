@@ -113,7 +113,7 @@ function Hero() {
             </h1>
             <motion.div className="hero-intro" initial={{ opacity: 0, y: 30 }} animate={ready ? { opacity: 1, y: 0 } : undefined} transition={{ delay: 1.1, duration: 1.1, ease: EASE_OUT }}>
               <p>
-                Eleven voices. One stage. On <b>{EVENT.dateLabel}</b>, Sfax gathers at the {EVENT.venue} to question what we take for granted.
+                Thirteen voices. One stage. On <b>{EVENT.dateLabel}</b>, Sfax gathers at the {EVENT.venue} to question what we take for granted.
               </p>
               <div className="hero-ctas">
                 <Magnetic>
@@ -394,12 +394,12 @@ function VoicesTeaser() {
         <div>
           <span className="script lineup-script">Meet Our</span>
           <Lines as="h2" className="display lineup-title">
-            <span>Eleven voices,</span>
+            <span>Thirteen voices,</span>
             <em>one stage.</em>
           </Lines>
         </div>
         <Reveal className="teaser-side">
-          <p>Six speakers, three panelists and two moderators. Each one has a story that breaks a pattern — discover them one by one.</p>
+          <p>Seven speakers, four panelists and two moderators. Each one has a story that breaks a pattern — discover them one by one.</p>
           <Magnetic>
             <Link href="/speakers" className="btn btn-red" data-cursor="Meet">
               <span className="btn-fill" />

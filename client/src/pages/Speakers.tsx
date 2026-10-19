@@ -116,12 +116,12 @@ export default function Speakers() {
         label="The speakers"
         image="curtain"
         title={[
-          <span key="a">Eleven voices.</span>,
+          <span key="a">Thirteen voices.</span>,
           <span key="b">
             One <em>stage.</em>
           </span>,
         ]}
-        lead="Six speakers sharing ideas, three panelists in one conversation, and two moderators connecting it all."
+        lead="Seven speakers sharing ideas, four panelists in one conversation, and two moderators connecting it all."
         meta={[
           ["Speakers", "06"],
           ["Panelists", "03"],
