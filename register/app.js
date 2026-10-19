@@ -276,6 +276,7 @@
     unpaid: "Your payment wasn't completed, so no pass was issued. Choose a payment method to try again.",
     rejected: "We couldn't match your payment. Check your email, then register again with the same address.",
     "payment-init": "The payment page couldn't be opened. Please try again, or choose another payment method.",
+    "backend-outdated": "Registration is being updated — please try again in a few minutes.",
     "method-unavailable": "This payment method isn't available right now — please choose another one.",
   };
 
@@ -309,6 +310,9 @@
             };
       const out = await call(payload);
       if (!out || !out.ok) throw new Error((out && out.error) || "unknown");
+      // The payment backend always answers with a status. A ticket without one means the
+      // Apps Script deployment still runs the old free-registration code: never show a pass.
+      if (step !== "lookup" && !out.status) throw new Error("backend-outdated");
       if (out.status === "redirect" && out.payUrl) {
         saveForm();
         leaving = true;
