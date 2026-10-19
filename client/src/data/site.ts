@@ -42,6 +42,8 @@ export const TEAM = [
   { name: "Youssef Ayedy", role: "Head of Operations", email: "youssef.ayedy@tedxthyna.com" },
   { name: "Zied Affes", role: "Data & Information Specialist", email: "affes.zied@tedxthyna.com" },
   { name: "Mohamed Aziz Mtimet", role: "Head of Finance & Legalities", email: "aziz.mtimet@tedxthyna.com" },
+  { name: "Youssef Hamrouni", role: "Content Production & Video Editing Specialist", email: "youcef.hamrouni@tedxthyna.com" },
+  { name: "Yassine Gharbi", role: "Creative Marketing & Campaign Strategy Specialist", email: "gharbi.yassine@tedxthyna.com" },
 ];
 
 export const FILES = [
