@@ -26,3 +26,8 @@ Until `ENDPOINT` is set, the form shows "Registration is being set up".
 ```bash
 npx serve register
 ```
+
+## After changing app.js, styles.css or config.js
+
+Bump the `?v=` stamp on those three files in `index.html` (e.g. `?v=20261020a`), so phones that cached the old
+version load the new one.
