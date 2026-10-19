@@ -415,6 +415,30 @@ function selectedRows_() {
 function sheet_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sh = ss.getSheetByName(SETTINGS.SHEET_NAME);
+  if (sh && sh.getLastRow() > 0) {
+    // A tab from the free-registration version has different columns. Keep it untouched
+    // under another name and start a fresh tab with the payment columns.
+    const width = Math.max(sh.getLastColumn(), HEADERS.length);
+    const header = sh.getRange(1, 1, 1, width).getValues()[0].map(String);
+    const matches = HEADERS.every((h, i) => header[i] === h);
+    if (!matches) {
+      const lock = LockService.getScriptLock();
+      lock.waitLock(20000);
+      try {
+        sh = ss.getSheetByName(SETTINGS.SHEET_NAME); // re-check after waiting
+        const hdr = sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), HEADERS.length)).getValues()[0].map(String);
+        if (!HEADERS.every((h, i) => hdr[i] === h)) {
+          let name = "Registrations (before payments)";
+          for (let n = 2; ss.getSheetByName(name); n++) name = "Registrations (before payments " + n + ")";
+          sh.setName(name);
+          sh = null;
+        }
+      } finally {
+        lock.releaseLock();
+      }
+      if (!sh) sh = ss.getSheetByName(SETTINGS.SHEET_NAME);
+    }
+  }
   if (!sh) {
     sh = ss.insertSheet(SETTINGS.SHEET_NAME);
     sh.appendRow(HEADERS);

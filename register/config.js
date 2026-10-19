@@ -24,9 +24,10 @@ window.TEDX_REGISTER = {
     PRICE: 40,
     CURRENCY: "TND",
     METHODS: ["konnect", "flouci", "clictopay", "d17", "transfer"],
-    // Shown greyed out with "Coming soon" and can't be picked. Remove "clictopay"
-    // from this list once SMT has opened your ClicToPay account.
-    COMING_SOON: ["clictopay"],
+    // Shown greyed out with "Coming soon" and can't be picked. Remove a method from
+    // this list once its keys are added in Apps Script (Konnect, Flouci) or once SMT
+    // has opened your ClicToPay account.
+    COMING_SOON: ["konnect", "flouci", "clictopay"],
     D17_NUMBER: "+216 93 072 842", // phone number linked to your D17 account, e.g. "+216 XX XXX XXX"
     D17_NAME: "", // name shown in D17 for that account
     BANK: {
