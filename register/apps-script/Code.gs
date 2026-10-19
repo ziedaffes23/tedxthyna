@@ -30,6 +30,11 @@ const SETTINGS = {
   SEND_CONFIRMATION_EMAIL: true,
   REGISTER_URL: "https://register.tedxthyna.com",
   REPLY_TO: "affes.zied@tedxthyna.com",
+  FROM_NAME: "TEDx Thyna Youth",
+  // Leave empty to send from the Google account that owns this script.
+  // Or set a TEDx Thyna address that is added in that Gmail under
+  // Settings → Accounts → "Send mail as" (see README.md).
+  FROM_EMAIL: "",
   // Shown in the email to people who choose "Pay in person". Say where and when they can pay and collect.
   PICKUP_INFO: "Our team will contact you by phone to arrange where and when to pay and collect your ticket.",
 };
@@ -628,66 +633,206 @@ function safeMail_(fn) {
 }
 
 /* ───────── emails ───────── */
+// Paper / poster look of register.tedxthyna.com. Table layout + inline styles so it
+// renders the same in Gmail, Apple Mail and Outlook. Fonts fall back to Georgia / Arial.
 
-function mailShell_(inner) {
+const MAIL = {
+  paper: "#ece7e2",
+  sheet: "#f6f2ed",
+  ink: "#0b0b0b",
+  dim: "#6b6560",
+  line: "#d9d2ca",
+  red: "#c32b30",
+  serif: "'Playfair Display', Georgia, 'Times New Roman', serif",
+  sans: "'DM Sans', Helvetica, Arial, sans-serif",
+  mono: "'IBM Plex Mono', 'Courier New', monospace",
+};
+
+function mailKicker_(text, colour) {
+  return '<div style="font:500 11px/1.4 ' + MAIL.mono + ";letter-spacing:3px;text-transform:uppercase;color:" + (colour || MAIL.dim) + '">' + text + "</div>";
+}
+
+/** Big two-line title: red italic script-like line + serif caps line. */
+function mailTitle_(small, big) {
   return (
-    '<div style="font-family:Montserrat,Arial,sans-serif;max-width:560px;margin:auto;color:#111">' +
-    '<div style="background:#000;padding:22px 26px"><span style="color:#e62b1e;font-weight:800;font-size:22px">TED<sup>x</sup></span> ' +
-    '<span style="color:#fff;font-size:20px">Thyna Youth</span></div>' +
-    '<div style="padding:26px;border:1px solid #eee;border-top:0">' + inner +
-    '<p style="color:#777;font-size:12px;margin-top:28px">x = independently organized TED event</p></div></div>'
+    '<div style="font:italic 400 30px/1 ' + MAIL.serif + ";color:" + MAIL.red + ';margin:18px 0 2px">' + small + "</div>" +
+    '<div style="font:600 40px/1.02 ' + MAIL.serif + ";color:" + MAIL.ink + ';text-transform:uppercase;letter-spacing:.5px">' + big + "</div>"
   );
 }
 
-function sendMail_(email, subject, inner) {
-  MailApp.sendEmail({ to: email, subject: subject, htmlBody: mailShell_(inner), name: "TEDx Thyna Youth", replyTo: SETTINGS.REPLY_TO });
+function mailP_(html) {
+  return '<p style="margin:16px 0 0;font:400 15px/1.6 ' + MAIL.sans + ";color:" + MAIL.ink + '">' + html + "</p>";
 }
+
+function mailButton_(label, url) {
+  return (
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 0"><tr>' +
+    '<td style="border-radius:999px;background:' + MAIL.red + '">' +
+    '<a href="' + url + '" style="display:inline-block;padding:15px 30px;font:600 15px ' + MAIL.sans +
+    ';color:#ffffff;text-decoration:none;border-radius:999px">' + label + " &rarr;</a></td></tr></table>"
+  );
+}
+
+/** Label / value rows (Date, Venue, …). */
+function mailFacts_(rows) {
+  return (
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 0;border-top:1.5px solid ' + MAIL.ink + '">' +
+    rows
+      .map(function (r) {
+        return (
+          '<tr><td style="padding:12px 12px 12px 0;border-bottom:1px solid ' + MAIL.line + ';width:110px;vertical-align:top">' + mailKicker_(r[0], MAIL.red) + "</td>" +
+          '<td style="padding:11px 0;border-bottom:1px solid ' + MAIL.line + ";font:600 15px/1.45 " + MAIL.sans + ";color:" + MAIL.ink + '">' + r[1] +
+          (r[2] ? '<div style="font:400 13px/1.45 ' + MAIL.sans + ";color:" + MAIL.dim + '">' + r[2] + "</div>" : "") + "</td></tr>"
+        );
+      })
+      .join("") +
+    "</table>"
+  );
+}
+
+/** The pass: black ticket, perforated line, ticket number below (stacks well on phones). */
+function mailTicket_(name, ticket) {
+  return (
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 0;background:' + MAIL.ink + ';border-radius:12px">' +
+    '<tr><td style="padding:22px 24px 18px">' +
+    mailKicker_("General Pass", "#ef4a50") +
+    '<div style="font:600 22px/1.15 ' + MAIL.serif + ';color:#ffffff;text-transform:uppercase;margin:10px 0 0">' + escape_(name) + "</div>" +
+    '<div style="font:400 13px/1.5 ' + MAIL.sans + ';color:#bdb6ae;margin:8px 0 0">15 Nov 2026 &middot; 10:00 – 20:00 &middot; Complexe Culturel Mohamed Jamoussi, Sfax</div>' +
+    "</td></tr>" +
+    '<tr><td style="padding:0 24px"><div style="border-top:2px dashed #3a3a3a;height:0;line-height:0;font-size:0">&nbsp;</div></td></tr>' +
+    '<tr><td style="padding:16px 24px 20px">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>' +
+    '<td style="vertical-align:middle">' + mailKicker_("Ticket Nº", "#9c958d") + "</td>" +
+    '<td align="right" style="vertical-align:middle;font:700 22px/1.2 ' + MAIL.mono + ';color:#ffffff;white-space:nowrap">' + escape_(ticket) + "</td>" +
+    "</tr></table></td></tr></table>"
+  );
+}
+
+/** Highlighted box (payment summary, next steps). */
+function mailBox_(html) {
+  return (
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 0"><tr>' +
+    '<td style="padding:18px 20px;border:1.5px dashed ' + MAIL.ink + ";background:#fbf9f6;font:400 14.5px/1.6 " + MAIL.sans + ";color:" + MAIL.ink + '">' + html + "</td></tr></table>"
+  );
+}
+
+function mailLayout_(o) {
+  const url = SETTINGS.REGISTER_URL;
+  return (
+    '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"></head>' +
+    '<body style="margin:0;padding:0;background:' + MAIL.paper + '">' +
+    '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' + escape_(o.preheader || "") + "</div>" +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:' + MAIL.paper + '"><tr><td align="center" style="padding:28px 14px">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px">' +
+    // header
+    '<tr><td style="padding:0 6px 18px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>' +
+    '<td><a href="https://tedxthyna.com"><img src="' + url + '/assets/wordmark-dark.png" width="160" alt="TEDx Thyna Youth" style="display:block;border:0;width:160px;height:auto"></a></td>' +
+    '<td align="right">' + mailKicker_("15 · 11 · 2026") + "</td></tr></table></td></tr>" +
+    // sheet
+    '<tr><td style="background:' + MAIL.sheet + ";border-top:6px solid " + MAIL.red + ';padding:34px 30px 34px;border-radius:2px">' +
+    mailKicker_(o.kicker || "TEDx Thyna Youth 2026 &middot; Break The Pattern") +
+    mailTitle_(o.small, o.big) +
+    o.body +
+    "</td></tr>" +
+    // footer
+    '<tr><td style="padding:22px 6px 0;text-align:center">' +
+    '<div style="font:italic 500 17px/1.3 ' + MAIL.serif + ";color:" + MAIL.ink + '">Break <span style="color:' + MAIL.red + '">the</span> pattern.</div>' +
+    '<div style="margin:12px 0 0;font:400 12.5px/1.7 ' + MAIL.sans + ";color:" + MAIL.dim + '">' +
+    '<a href="https://tedxthyna.com" style="color:' + MAIL.dim + '">tedxthyna.com</a> &middot; ' +
+    '<a href="https://www.instagram.com/tedxthyna/" style="color:' + MAIL.dim + '">Instagram</a> &middot; ' +
+    "Questions? Just reply to this email.</div>" +
+    '<div style="margin:10px 0 0;font:400 10.5px/1.5 ' + MAIL.mono + ";letter-spacing:1.5px;text-transform:uppercase;color:#9c958d" + '">x = independently organized TED event</div>' +
+    "</td></tr></table></td></tr></table></body></html>"
+  );
+}
+
+function plainText_(html) {
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<div/gi, "\n<div")
+    .replace(/<\/(p|div|tr|h\d)>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&middot;/g, "·").replace(/&rarr;/g, "→").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
+    .replace(/\n\s*\n\s*\n+/g, "\n\n")
+    .trim();
+}
+
+/** Sends from SETTINGS.FROM_EMAIL (a Gmail "Send mail as" alias) when set, else from the script owner. */
+function sendMail_(email, subject, o) {
+  const html = mailLayout_(o);
+  const opts = { htmlBody: html, name: SETTINGS.FROM_NAME, replyTo: SETTINGS.REPLY_TO };
+  if (SETTINGS.FROM_EMAIL) {
+    GmailApp.sendEmail(email, subject, plainText_(html), Object.assign({ from: SETTINGS.FROM_EMAIL }, opts));
+  } else {
+    MailApp.sendEmail(Object.assign({ to: email, subject: subject, body: plainText_(html) }, opts));
+  }
+}
+
+const EVENT_FACTS = [
+  ["Date", "Sunday 15 November 2026", "10:00 – 20:00"],
+  ["Venue", "Complexe Culturel Mohamed Jamoussi", "Rue Ibn Al Jazzar, Sfax"],
+];
 
 function sendConfirmation_(email, name, ticket) {
-  sendMail_(
-    email,
-    "Your TEDx Thyna Youth pass · " + ticket,
-    "<p>Hi " + escape_(name) + ",</p>" +
-      "<p>Payment received (" + SETTINGS.PRICE_TND + " TND) — your General Pass for <b>TEDx Thyna Youth 2026 — Break The Pattern</b> is confirmed.</p>" +
-      '<p style="font-size:13px;letter-spacing:2px;color:#777;margin:22px 0 4px">TICKET Nº</p>' +
-      '<p style="font-size:30px;font-weight:800;margin:0 0 22px">' + ticket + "</p>" +
-      "<p><b>15 November 2026</b> · 10:00 – 20:00<br>Complexe Culturel Mohamed Jamoussi, Rue Ibn Al Jazzar, Sfax</p>" +
-      '<p>Download your ticket any time at <a href="' + SETTINGS.REGISTER_URL + '" style="color:#e62b1e">' +
-      SETTINGS.REGISTER_URL.replace("https://", "") + "</a> → “Already registered? Find my pass”.</p>"
-  );
+  sendMail_(email, "Your TEDx Thyna Youth pass · " + ticket, {
+    preheader: "Payment received — your General Pass " + ticket + " is confirmed. See you on 15 November.",
+    small: "You're in,",
+    big: escape_(String(name).split(" ")[0]) + '<span style="color:' + MAIL.red + '">.</span>',
+    body:
+      mailP_("We've received your payment of <b>" + SETTINGS.PRICE_TND + " TND</b>. Your General Pass for <b>TEDx Thyna Youth 2026 — Break The Pattern</b> is confirmed.") +
+      mailTicket_(name, ticket) +
+      mailButton_("Download my pass", SETTINGS.REGISTER_URL) +
+      mailP_('<span style="color:' + MAIL.dim + ';font-size:13.5px">On the page, choose <b>Already registered? Find my pass</b> and enter this email. Show the pass at the entrance — on your phone or printed.</span>') +
+      mailFacts_(EVENT_FACTS),
+  });
 }
 
 function sendReceived_(email, name, method, reference) {
-  sendMail_(
-    email,
-    "We received your TEDx Thyna Youth registration",
-    "<p>Hi " + escape_(name) + ",</p>" +
-      "<p>Thanks for registering for <b>TEDx Thyna Youth 2026 — Break The Pattern</b>.</p>" +
-      "<p>We've noted your " + escape_(method) + " payment of <b>" + SETTINGS.PRICE_TND + " TND</b> (reference <b>" + escape_(reference) + "</b>). " +
-      "Our team checks payments by hand — once it's confirmed you'll receive your ticket number by email, usually within 24 hours.</p>"
-  );
+  sendMail_(email, "We received your TEDx Thyna Youth registration", {
+    preheader: "Thanks " + String(name).split(" ")[0] + " — we're checking your " + method + " payment. Your ticket follows by email.",
+    small: "Almost there,",
+    big: escape_(String(name).split(" ")[0]) + '<span style="color:' + MAIL.red + '">.</span>',
+    body:
+      mailP_("Thanks for registering for <b>TEDx Thyna Youth 2026 — Break The Pattern</b>. Our team checks every payment by hand.") +
+      mailBox_(
+        mailKicker_("Your payment", MAIL.red) +
+        '<div style="margin:8px 0 0">' + escape_(method) + " &middot; <b>" + SETTINGS.PRICE_TND + " TND</b></div>" +
+        '<div style="margin:2px 0 0;color:' + MAIL.dim + '">Reference: <span style="font-family:' + MAIL.mono + ";color:" + MAIL.ink + '">' + escape_(reference) + "</span></div>"
+      ) +
+      mailP_("As soon as it's confirmed — usually within 24 hours — you'll get a second email with your <b>ticket number</b>.") +
+      mailFacts_(EVENT_FACTS),
+  });
 }
 
 function sendPickup_(email, name) {
-  sendMail_(
-    email,
-    "We received your TEDx Thyna Youth registration",
-    "<p>Hi " + escape_(name) + ",</p>" +
-      "<p>Thanks for registering for <b>TEDx Thyna Youth 2026 — Break The Pattern</b>. You chose to <b>pay in person</b>.</p>" +
-      "<p>" + escape_(SETTINGS.PICKUP_INFO) + "</p>" +
-      "<p>Please bring <b>" + SETTINGS.PRICE_TND + " TND</b>. As soon as your payment is received, your ticket number is emailed to you.</p>"
-  );
+  sendMail_(email, "We received your TEDx Thyna Youth registration", {
+    preheader: "You're registered — pay " + SETTINGS.PRICE_TND + " TND in person and collect your ticket.",
+    small: "You're registered,",
+    big: escape_(String(name).split(" ")[0]) + '<span style="color:' + MAIL.red + '">.</span>',
+    body:
+      mailP_("Thanks for registering for <b>TEDx Thyna Youth 2026 — Break The Pattern</b>. You chose to <b>pay in person</b>.") +
+      mailBox_(
+        mailKicker_("Next step", MAIL.red) +
+        '<div style="margin:8px 0 0">' + escape_(SETTINGS.PICKUP_INFO) + "</div>" +
+        '<div style="margin:6px 0 0">Bring <b>' + SETTINGS.PRICE_TND + " TND</b> in cash.</div>"
+      ) +
+      mailP_("Once you've paid, your <b>ticket number</b> is emailed to you straight away.") +
+      mailFacts_(EVENT_FACTS),
+  });
 }
 
 function sendRejected_(email, name) {
-  sendMail_(
-    email,
-    "About your TEDx Thyna Youth payment",
-    "<p>Hi " + escape_(name) + ",</p>" +
-      "<p>We couldn't match your payment to our account, so your pass isn't confirmed yet.</p>" +
-      '<p>Please check the reference and register again at <a href="' + SETTINGS.REGISTER_URL + '" style="color:#e62b1e">' +
-      SETTINGS.REGISTER_URL.replace("https://", "") + "</a> with the same email, or reply to this message.</p>"
-  );
+  sendMail_(email, "About your TEDx Thyna Youth payment", {
+    preheader: "We couldn't find your payment yet — here's what to do.",
+    small: "Hi " + escape_(String(name).split(" ")[0]) + ",",
+    big: "One more <span style=\"color:" + MAIL.red + '">step</span>',
+    body:
+      mailP_("We couldn't match your payment to our account, so your pass isn't confirmed yet.") +
+      mailP_("Please check the reference on your receipt and register again with <b>the same email</b> — or simply reply to this email with a screenshot of your payment and we'll sort it out.") +
+      mailButton_("Register again", SETTINGS.REGISTER_URL),
+  });
 }
 
 function escape_(s) {

@@ -40,6 +40,22 @@ Registrations and payments are saved in a Google Sheet. The script:
 
 The first registration creates the **Registrations** tab. Reload the sheet once to see the **TEDx** menu.
 
+## Sending emails from a TEDx Thyna address
+
+Emails are sent by the Google account that **deployed** the script (shown as "TEDx Thyna Youth").
+Replies always go to `REPLY_TO`. To send from a TEDx Thyna address, pick one:
+
+**A — Deploy from the TEDx Thyna Google account (recommended).**
+1. Share the sheet with the TEDx Thyna Google account as *Editor*.
+2. Sign in to Google **as that account**, open the sheet → Extensions → Apps Script.
+3. Deploy → New deployment → Web app, *Execute as: Me*, *Who has access: Anyone* → authorise.
+4. Put the new `/exec` URL in `../config.js` (`ENDPOINT`). Emails now come from that account.
+
+**B — Keep your account, send "as" the TEDx address.**
+1. In the Gmail of the account that deployed the script: Settings → Accounts → *Send mail as* →
+   add the TEDx Thyna address and confirm it.
+2. Set `FROM_EMAIL` in `SETTINGS` to that address, save, Deploy → Manage deployments → ✏️ → New version.
+
 ## Testing, then going live
 
 - **Konnect:** `KONNECT_SANDBOX: true` uses Konnect's test environment — use your *sandbox* API key and wallet ID.
