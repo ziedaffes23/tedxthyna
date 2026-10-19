@@ -57,7 +57,7 @@ export const FILES = [
     code: "02",
     tag: "The Speakers",
     title: "Who holds the mic",
-    question: "Ten voices, one stage.",
+    question: "Eleven voices, one stage.",
     href: "/speakers",
     image: "voices",
   },
@@ -67,7 +67,7 @@ export const FILES = [
     title: "Where it unfolds",
     question: "Where will it happen?",
     href: "/scene",
-    image: "hall",
+    image: "stage",
   },
   {
     code: "04",
@@ -75,7 +75,7 @@ export const FILES = [
     title: "Who runs the operation",
     question: "Who built the file?",
     href: "/organization",
-    image: "seats",
+    image: "board",
   },
   {
     code: "05",
@@ -83,7 +83,7 @@ export const FILES = [
     title: "How the day plays out",
     question: "What happens, and when?",
     href: "/agenda",
-    image: "plan",
+    image: "desk",
   },
 ] as const;
 
@@ -96,6 +96,7 @@ export const SPEAKERS: { first: string; last: string; role: Role; label: string;
   { first: "Sawsen", last: "Maalej", role: "Speaker", label: "Speaker", bio: "Tunisian *actress*, media personality & *broadcaster*", photo: "sawsen-maalej" },
   { first: "Nawel", last: "Bizid", role: "Speaker", label: "Speaker", bio: "Tunisian *journalist*, media *producer* & *podcaster*", photo: "nawel-bizid" },
   { first: "Mohamed", last: "Khammessi", role: "Speaker", label: "Speaker", bio: "TV & Radio *presenter*, producer, *podcast* host", photo: "mohamed-khammessi" },
+  { first: "Youssef", last: "Zribi", role: "Speaker", label: "Speaker", bio: "Tunisian *entrepreneur* and *SDGs advocate*, Founder of *EcoTrunk*, AI-powered waste sorting", photo: "youssef-zribi" },
   { first: "Omar", last: "Derbel", role: "Panelist", label: "Panelist", bio: "Exploring *art*, literature and *influencer*", photo: "omar-derbel" },
   { first: "Adem", last: "Sebiaa", role: "Panelist", label: "Panelist", bio: "Master in *Diplomacy* and international relations, *Content creator* 120k+ on TikTok", photo: "adem-sebiaa" },
   { first: "Dhia", last: "Saibi", role: "Panelist", label: "Panelist", bio: "Tunisian *football* content *creator*", photo: "dhia-saibi" },
@@ -117,8 +118,6 @@ export const speakerPhoto = (photo: string) => `/media/speakers/${photo}.webp`;
 export const PHOTO_CREDITS = [
   { what: "City walls of Sfax", who: "Hamed Gamaoun", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/w/index.php?curid=51962668" },
   { what: "Medina of Sfax", who: "IssamBarhoumi", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/w/index.php?curid=51853012" },
-  { what: "Teatro de Santa Isabel", who: "Wilfredo R. Rodríguez H.", license: "CC0", url: "https://commons.wikimedia.org/w/index.php?curid=94701086" },
-  { what: "Theater Show", who: "Kurt Kaiser", license: "CC0", url: "https://commons.wikimedia.org/w/index.php?curid=107668370" },
 ];
 
 export const img = (name: string, size: 1000 | 2000 = 2000) => `/media/${name}-${size}.webp`;

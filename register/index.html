@@ -46,16 +46,37 @@
           <ul class="facts">
             <li><span class="mono">Date</span><b>15 Nov 2026</b><small>10:00 – 20:00</small></li>
             <li><span class="mono">Venue</span><b>Complexe Culturel Mohamed Jamoussi</b><small>Rue Ibn Al Jazzar, Sfax</small></li>
-            <li><span class="mono">Pass</span><b>General Pass</b><small><span data-price>40</span> TND · one per person</small></li>
+            <li><span class="mono">Pass</span><b>General Pass</b><small><span data-price>40</span> DT · one per person</small></li>
           </ul>
         </div>
         <div class="hero-collage" aria-hidden="true">
-          <div class="hc-block"></div>
-          <div class="hc-disc"><img src="/assets/logo.webp" alt="" width="220" height="220" /></div>
+          <div class="hc-city"><img src="/assets/sfax-1000.webp" alt="" /></div>
+          <span class="hc-block is-dark"></span>
+          <span class="hc-block is-red"></span>
+          <span class="hc-block is-red-sm"></span>
+          <div class="hc-palms-wrap">
+            <svg class="hc-palms" viewBox="0 0 220 160">
+              <g fill="currentColor">
+                <path d="M58 160 C60 120 62 90 70 60 L73 61 C66 92 65 122 64 160Z" />
+                <path d="M71 60 C55 50 35 52 18 64 C38 54 54 56 69 63Z M71 60 C60 42 42 34 24 36 C44 40 58 48 69 62Z M71 60 C74 40 88 28 104 26 C90 34 80 46 73 62Z M71 60 C88 50 108 52 122 62 C104 56 88 56 73 63Z M71 60 C70 46 60 32 46 26 C60 36 66 46 69 61Z" />
+                <path d="M148 160 C149 128 150 104 156 80 L158 81 C153 104 153 130 153 160Z" />
+                <path d="M157 80 C145 72 130 74 118 82 C132 76 145 77 156 83Z M157 80 C150 66 136 60 124 62 C138 66 148 72 156 82Z M157 80 C162 66 172 58 186 58 C174 64 166 72 158 82Z M157 80 C170 74 184 76 194 84 C182 79 170 79 158 83Z" />
+                <rect x="0" y="146" width="220" height="14" />
+                <path d="M84 146 h40 v-22 h6 v-10 h-6 v-4 a14 14 0 0 1 -40 0 v4 h-6 v10 h6Z" opacity=".85" />
+              </g>
+            </svg>
+          </div>
+          <div class="hc-frame">
+            <img id="hcPhoto" src="/assets/speakers/hamza-belloumi.webp" alt="Hamza Belloumi, Speaker" />
+            <span class="torn torn-bottom hc-torn" data-torn="5"></span>
+          </div>
           <span class="hc-tape is-a"></span>
-          <span class="hc-tape is-b"></span>
           <span class="stamp">Seats<br />are limited</span>
-          <span class="hc-date serif">15<em>.</em>11</span>
+          <div class="hc-caption">
+            <span class="script" id="hcRole">Meet Our Speaker</span>
+            <span class="poster-name"><span class="pn-first" id="hcFirst">Hamza</span><span class="pn-last" id="hcLast">Belloumi</span></span>
+            <div class="hc-progress" id="hcProgress" role="tablist" aria-label="Speakers"></div>
+          </div>
         </div>
       </section>
 
@@ -291,7 +312,6 @@
           <a href="mailto:affes.zied@tedxthyna.com">Contact</a>
         </div>
       </div>
-      <div class="foot-giant" aria-hidden="true">THYNA</div>
       <div class="foot-bottom mono">
         <span>© 2026 TEDx Thyna Youth</span>
         <span>x = independently organized TED event · operated under license from TED</span>

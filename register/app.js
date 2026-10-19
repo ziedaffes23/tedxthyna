@@ -37,6 +37,77 @@
     el.innerHTML = `<svg viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0,60 L0,20 L${pts.join(" L")} L1000,18 L1000,60 Z"/></svg>`;
   });
 
+  /* ───────── hero speaker carousel (same rhythm as tedxthyna.com) ───────── */
+
+  const HERO_SPEAKERS = [
+    { first: "Hamza", last: "Belloumi", label: "Speaker", photo: "hamza-belloumi" },
+    { first: "Sawsen", last: "Haj Amor", label: "Speaker", photo: "sawsen-haj-amor" },
+    { first: "Mohamed", last: "Khammessi", label: "Speaker", photo: "mohamed-khammessi" },
+    { first: "Sawsen", last: "Maalej", label: "Speaker", photo: "sawsen-maalej" },
+  ];
+  const hcPhoto = $("#hcPhoto");
+  const hcProgress = $("#hcProgress");
+  if (hcPhoto) {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hcRole = $("#hcRole");
+    const hcFirst = $("#hcFirst");
+    const hcLast = $("#hcLast");
+    const hcFrame = hcPhoto.closest(".hc-frame");
+    let hcIndex = 0;
+    let timer = null;
+
+    const buttons = HERO_SPEAKERS.map((s, i) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.role = "tab";
+      btn.ariaLabel = `${s.first} ${s.last}`;
+      btn.innerHTML = "<i></i>";
+      btn.addEventListener("click", () => render(i, true));
+      hcProgress.appendChild(btn);
+      return btn;
+    });
+
+    function paintButtons() {
+      buttons.forEach((btn, i) => {
+        btn.classList.toggle("is-on", i === hcIndex);
+        btn.classList.toggle("is-done", i < hcIndex);
+        btn.setAttribute("aria-selected", i === hcIndex ? "true" : "false");
+        if (i === hcIndex) {
+          const bar = btn.querySelector("i");
+          bar.style.animation = "none";
+          void bar.offsetWidth;
+          bar.style.animation = "";
+        }
+      });
+    }
+
+    function render(index, manual) {
+      hcIndex = (index + HERO_SPEAKERS.length) % HERO_SPEAKERS.length;
+      const s = HERO_SPEAKERS[hcIndex];
+      hcPhoto.style.opacity = "0";
+      setTimeout(() => {
+        hcPhoto.src = `/assets/speakers/${s.photo}.webp`;
+        hcPhoto.alt = `${s.first} ${s.last}, ${s.label}`;
+        hcRole.textContent = `Meet Our ${s.label}`;
+        hcFirst.textContent = s.first;
+        hcLast.textContent = s.last;
+        hcPhoto.style.opacity = "1";
+      }, reduce ? 0 : 350);
+      paintButtons();
+      if (manual && !reduce) restart();
+    }
+
+    function restart() {
+      if (timer) window.clearInterval(timer);
+      if (reduce) return;
+      timer = window.setInterval(() => render(hcIndex + 1), 4000);
+    }
+
+    if (hcFrame) hcFrame.addEventListener("click", () => render(hcIndex + 1, true));
+    paintButtons();
+    restart();
+  }
+
   /* ───────── ticket rendering ───────── */
 
   // Positions are in the template's native pixels (1772 × 709).
